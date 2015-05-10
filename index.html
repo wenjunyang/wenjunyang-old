@@ -174,7 +174,7 @@
 </header>
     <div class="article-content">
         
-        <h1 id="O(1)复杂度实现单链表的插入删除操作">O(1)复杂度实现单链表的插入删除操作</h1><h2 id="插入">插入</h2><pre><code>插入是指在某个节点之前插入一个新的节点，由于要找到前置节点，所以时间复杂度是<span class="function"><span class="title">O</span><span class="params">(n)</span></span>。怎样实现<span class="function"><span class="title">O</span><span class="params">(<span class="number">1</span>)</span></span>的插入呢？我们得换一种思维方式，肯定是不能找前置节点，但我们可以交换节点和待插入节点的值，这样前置节点的next指针值没变，但是指向的内存地址的值已经是新节点的值了。
+        <h2 id="插入">插入</h2><pre><code>插入是指在某个节点之前插入一个新的节点，由于要找到前置节点，所以时间复杂度是<span class="function"><span class="title">O</span><span class="params">(n)</span></span>。怎样实现<span class="function"><span class="title">O</span><span class="params">(<span class="number">1</span>)</span></span>的插入呢？我们得换一种思维方式，肯定是不能找前置节点，但我们可以交换节点和待插入节点的值，这样前置节点的next指针值没变，但是指向的内存地址的值已经是新节点的值了。
 </code></pre><h2 id="删除">删除</h2><pre><code>思路和插入的思路基本一样，就是交换节点和他的<span class="keyword">next</span>节点，但是如何<span class="keyword">next</span>节点为<span class="keyword">NULL</span>,那就没办法了，得老老实实找到上一个节点。
 </code></pre><hr>
 <p>直接上代码：</p>
@@ -521,6 +521,7 @@ $(document).ready(function(){
 <!-- Tiny_search Begin -->
 
 <!-- Tiny_search End -->
+
 
   </body>
  </html>
