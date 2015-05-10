@@ -4,22 +4,25 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������ | loveleilei</title>
+    <title>O(1)复杂度实现单链表的插入删除操作 | loveleilei</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wendale">
     
 
     
-    <meta name="description" content="O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ����������������ָ��ĳ���ڵ�֮ǰ����һ���µĽڵ㣬����Ҫ�ҵ�ǰ�ýڵ㣬����ʱ�临�Ӷ���O(n)������ʵ��O(1)�Ĳ����أ����ǵû�һ��˼ά��ʽ���϶��ǲ�����ǰ�ýڵ㣬�����ǿ��Խ����ڵ��ʹ������ڵ���ֵ������ǰ�ýڵ���nextָ��ֵû�䣬����ָ">
+    <meta name="description" content="O(1)复杂度实现单链表的插入删除操作插入插入是指在某个节点之前插入一个新的节点，由于要找到前置节点，所以时间复杂度是O(n)。怎样实现O(1)的插入呢？我们得换一种思维方式，肯定是不能找前置节点，但我们可以交换节点和待插入节点的值，这样前置节点的next指针值没变，但是指向的内存地址的值已经是新节点的值了。
+删除思路和插入的思路基本一样，就是交换节点和他的next节点，但是如何next节点为NU">
 <meta property="og:type" content="article">
-<meta property="og:title" content="O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������">
+<meta property="og:title" content="O(1)复杂度实现单链表的插入删除操作">
 <meta property="og:url" content="http://wendale.cn/2015/05/10/单链表O(1)插入删除/index.html">
 <meta property="og:site_name" content="loveleilei">
-<meta property="og:description" content="O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ����������������ָ��ĳ���ڵ�֮ǰ����һ���µĽڵ㣬����Ҫ�ҵ�ǰ�ýڵ㣬����ʱ�临�Ӷ���O(n)������ʵ��O(1)�Ĳ����أ����ǵû�һ��˼ά��ʽ���϶��ǲ�����ǰ�ýڵ㣬�����ǿ��Խ����ڵ��ʹ������ڵ���ֵ������ǰ�ýڵ���nextָ��ֵû�䣬����ָ">
+<meta property="og:description" content="O(1)复杂度实现单链表的插入删除操作插入插入是指在某个节点之前插入一个新的节点，由于要找到前置节点，所以时间复杂度是O(n)。怎样实现O(1)的插入呢？我们得换一种思维方式，肯定是不能找前置节点，但我们可以交换节点和待插入节点的值，这样前置节点的next指针值没变，但是指向的内存地址的值已经是新节点的值了。
+删除思路和插入的思路基本一样，就是交换节点和他的next节点，但是如何next节点为NU">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������">
-<meta name="twitter:description" content="O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ����������������ָ��ĳ���ڵ�֮ǰ����һ���µĽڵ㣬����Ҫ�ҵ�ǰ�ýڵ㣬����ʱ�临�Ӷ���O(n)������ʵ��O(1)�Ĳ����أ����ǵû�һ��˼ά��ʽ���϶��ǲ�����ǰ�ýڵ㣬�����ǿ��Խ����ڵ��ʹ������ڵ���ֵ������ǰ�ýڵ���nextָ��ֵû�䣬����ָ">
+<meta name="twitter:title" content="O(1)复杂度实现单链表的插入删除操作">
+<meta name="twitter:description" content="O(1)复杂度实现单链表的插入删除操作插入插入是指在某个节点之前插入一个新的节点，由于要找到前置节点，所以时间复杂度是O(n)。怎样实现O(1)的插入呢？我们得换一种思维方式，肯定是不能找前置节点，但我们可以交换节点和待插入节点的值，这样前置节点的next指针值没变，但是指向的内存地址的值已经是新节点的值了。
+删除思路和插入的思路基本一样，就是交换节点和他的next节点，但是如何next节点为NU">
 
     
     <link rel="alternative" href="/atom.xml" title="loveleilei" type="application/atom+xml">
@@ -79,7 +82,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/10/单链表O(1)插入删除/" title="O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������" itemprop="url">O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������</a>
+      <a href="/2015/05/10/单链表O(1)插入删除/" title="O(1)复杂度实现单链表的插入删除操作" itemprop="url">O(1)复杂度实现单链表的插入删除操作</a>
   </h1>
   <p class="article-author">By
        
@@ -95,15 +98,15 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������"><span class="toc-number">1.</span> <span class="toc-text">O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#����"><span class="toc-number">1.1.</span> <span class="toc-text">����</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ɾ��"><span class="toc-number">1.2.</span> <span class="toc-text">ɾ��</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#O(1)复杂度实现单链表的插入删除操作"><span class="toc-number">1.</span> <span class="toc-text">O(1)复杂度实现单链表的插入删除操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#插入"><span class="toc-number">1.1.</span> <span class="toc-text">插入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#删除"><span class="toc-number">1.2.</span> <span class="toc-text">删除</span></a></li></ol></li></ol>
 		
 		</div>
 		
-		<h1 id="O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������">O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������</h1><h2 id="����">����</h2><pre><code>������ָ��ĳ���ڵ�֮ǰ����һ���µĽڵ㣬����Ҫ�ҵ�ǰ�ýڵ㣬����ʱ�临�Ӷ���<span class="function"><span class="title">O</span><span class="params">(n)</span></span>������ʵ��<span class="function"><span class="title">O</span><span class="params">(<span class="number">1</span>)</span></span>�Ĳ����أ����ǵû�һ��˼ά��ʽ���϶��ǲ�����ǰ�ýڵ㣬�����ǿ��Խ����ڵ��ʹ������ڵ���ֵ������ǰ�ýڵ���nextָ��ֵû�䣬����ָ�����ڴ���ַ��ֵ�Ѿ����½ڵ���ֵ�ˡ�
-</code></pre><h2 id="ɾ��">ɾ��</h2><pre><code>˼·�Ͳ�����˼·����һ�������ǽ����ڵ�������<span class="keyword">next</span>�ڵ㣬��������<span class="keyword">next</span>�ڵ�Ϊ<span class="keyword">NULL</span>,�Ǿ�û�취�ˣ�������ʵʵ�ҵ���һ���ڵ㡣
+		<h1 id="O(1)复杂度实现单链表的插入删除操作">O(1)复杂度实现单链表的插入删除操作</h1><h2 id="插入">插入</h2><pre><code>插入是指在某个节点之前插入一个新的节点，由于要找到前置节点，所以时间复杂度是<span class="function"><span class="title">O</span><span class="params">(n)</span></span>。怎样实现<span class="function"><span class="title">O</span><span class="params">(<span class="number">1</span>)</span></span>的插入呢？我们得换一种思维方式，肯定是不能找前置节点，但我们可以交换节点和待插入节点的值，这样前置节点的next指针值没变，但是指向的内存地址的值已经是新节点的值了。
+</code></pre><h2 id="删除">删除</h2><pre><code>思路和插入的思路基本一样，就是交换节点和他的<span class="keyword">next</span>节点，但是如何<span class="keyword">next</span>节点为<span class="keyword">NULL</span>,那就没办法了，得老老实实找到上一个节点。
 </code></pre><hr>
-<p>ֱ���ϴ��룺</p>
-<p>������c<br>    class Node {<br>public:<br>    int value;<br>    Node*   next;</p>
+<p>直接上代码：</p>
+<p>···c<br>    class Node {<br>public:<br>    int value;<br>    Node*   next;</p>
 <pre><code>~Node() {
     <span class="keyword">if</span> (next != NULL) {
         <span class="keyword">delete</span> next;
@@ -111,7 +114,7 @@
 }
 
 <span class="comment">/**
- * ��q�����ڴ�ֵ
+ * 与q交换内存值
  */</span>
 <span class="function"><span class="keyword">void</span> <span class="title">exchange</span><span class="params">(Node* q)</span> </span>{
     Node* tmp = <span class="keyword">new</span> Node();
@@ -122,7 +125,7 @@
 </code></pre><p>};</p>
 <p>class NodeList {<br>private:<br>    Node* head;</p>
 <pre><code><span class="comment">/**
- * �ҵ�p��ǰ�ýڵ�
+ * 找到p的前置节点
  */</span>
 Node*find_pre(Node *p) {
     Node* <span class="keyword">l</span> = head;
@@ -145,7 +148,7 @@ Node*find_pre(Node *p) {
 }
 
 /<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> ������ĩβ׷��
+ <span class="keyword">*</span> 在链表末尾追加
  <span class="keyword">*</span>/
 void add(Node<span class="keyword">*</span> p) {
     Node<span class="keyword">*</span> q = find_pre(NULL);
@@ -154,7 +157,7 @@ void add(Node<span class="keyword">*</span> p) {
 }
 
 /<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> �������ڵ�p֮ǰ����q,����ʵ�ֵĸ��Ӷ�O(n)
+ <span class="keyword">*</span> 在链表节点p之前插入q,这种实现的复杂度O(n)
  <span class="keyword">*</span>/
 void insert(Node<span class="keyword">*</span> p, Node<span class="keyword">*</span> q) {
     Node<span class="keyword">*</span> l = find_pre(p);
@@ -164,7 +167,7 @@ void insert(Node<span class="keyword">*</span> p, Node<span class="keyword">*</s
 }
 
 /<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> �������ڵ�p֮ǰ����q,����ʵ�ֵĸ��Ӷ�O(1)
+ <span class="keyword">*</span> 在链表节点p之前插入q,这种实现的复杂度O(1)
  <span class="keyword">*</span>/
 void quick_insert(Node<span class="keyword">*</span> p, Node<span class="keyword">*</span> q) {
     p-&gt;exchange(q);
@@ -172,7 +175,7 @@ void quick_insert(Node<span class="keyword">*</span> p, Node<span class="keyword
 }
 
 /<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> �Ƴ�p��ʱ�临�Ӷ�O(n)
+ <span class="keyword">*</span> 移除p，时间复杂度O(n)
  <span class="keyword">*</span>/
 void remove(Node<span class="keyword">*</span> p) {
     Node<span class="keyword">*</span> q = find_pre(p);
@@ -181,10 +184,10 @@ void remove(Node<span class="keyword">*</span> p) {
 }
 
 /<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> �����Ƴ�p��ʱ�临�Ӷ�O(1)
+ <span class="keyword">*</span> 快速移除p，时间复杂度O(1)
  <span class="keyword">*</span>/
 void quick_remove(Node<span class="keyword">*</span> p) {
-    //����һ���ڵ㣬û�취��ֻ������ɾ��
+    //最后一个节点，没办法，只能用慢删除
     if (p-&gt;next == NULL) {
         remove(p);
     }
@@ -205,7 +208,7 @@ void quick_remove(Node<span class="keyword">*</span> p) {
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://wendale.cn/2015/05/10/单链表O(1)插入删除/" data-title="O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������ | loveleilei" data-tsina="null" class="share clearfix">
+	  <div data-url="http://wendale.cn/2015/05/10/单链表O(1)插入删除/" data-title="O(1)复杂度实现单链表的插入删除操作 | loveleilei" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -218,7 +221,7 @@ void quick_remove(Node<span class="keyword">*</span> p) {
 	
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/05/10/单链表O(1)插入删除/" data-title="O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������" data-url="http://wendale.cn/2015/05/10/单链表O(1)插入删除/"></div>
+	<div class="ds-thread" data-thread-key="2015/05/10/单链表O(1)插入删除/" data-title="O(1)复杂度实现单链表的插入删除操作" data-url="http://wendale.cn/2015/05/10/单链表O(1)插入删除/"></div>
 </section>
 
 
@@ -228,7 +231,7 @@ void quick_remove(Node<span class="keyword">*</span> p) {
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������"><span class="toc-number">1.</span> <span class="toc-text">O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#����"><span class="toc-number">1.1.</span> <span class="toc-text">����</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ɾ��"><span class="toc-number">1.2.</span> <span class="toc-text">ɾ��</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#O(1)复杂度实现单链表的插入删除操作"><span class="toc-number">1.</span> <span class="toc-text">O(1)复杂度实现单链表的插入删除操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#插入"><span class="toc-number">1.1.</span> <span class="toc-text">插入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#删除"><span class="toc-number">1.2.</span> <span class="toc-text">删除</span></a></li></ol></li></ol>
  
   </div>
 
