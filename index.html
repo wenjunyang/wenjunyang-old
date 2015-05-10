@@ -98,97 +98,114 @@
 </code></pre><h2 id="删除">删除</h2><pre><code>思路和插入的思路基本一样，就是交换节点和他的<span class="keyword">next</span>节点，但是如何<span class="keyword">next</span>节点为<span class="keyword">NULL</span>,那就没办法了，得老老实实找到上一个节点。
 </code></pre><hr>
 <p>直接上代码：</p>
-<p>···c<br>    class Node {<br>public:<br>    int value;<br>    Node*   next;</p>
-<pre><code>~Node() {
-    <span class="keyword">if</span> (next != NULL) {
-        <span class="keyword">delete</span> next;
-    }
-}
+<pre><code><span class="keyword">class</span> Node {
+<span class="keyword">public</span>:
+    <span class="keyword">int</span> value;
+    Node*   <span class="keyword">next</span>;
 
-<span class="comment">/**
- * 与q交换内存值
- */</span>
-<span class="function"><span class="keyword">void</span> <span class="title">exchange</span><span class="params">(Node* q)</span> </span>{
+    ~Node() {
+    <span class="keyword">if</span> (<span class="keyword">next</span> != <span class="keyword">NULL</span>) {
+        <span class="keyword">delete</span> <span class="keyword">next</span>;
+    }
+    }
+
+    <span class="comment">/**
+     * 与q交换内存值
+     */</span>
+    <span class="keyword">void</span> exchange(Node* q) {
     Node* tmp = <span class="keyword">new</span> Node();
-    <span class="built_in">memcpy</span>(tmp, <span class="keyword">this</span>, <span class="keyword">sizeof</span>(Node));
-    <span class="built_in">memcpy</span>(<span class="keyword">this</span>, q, <span class="keyword">sizeof</span>(Node));
-    <span class="built_in">memcpy</span>(q, tmp, <span class="keyword">sizeof</span>(Node));
-}
-</code></pre><p>};</p>
-<p>class NodeList {<br>private:<br>    Node* head;</p>
-<pre><code><span class="comment">/**
- * 找到p的前置节点
- */</span>
-Node*find_pre(Node *p) {
-    Node* <span class="keyword">l</span> = head;
-
-    <span class="keyword">while</span> (<span class="keyword">l</span>-&gt;next != p) {
-        <span class="keyword">l</span> = <span class="keyword">l</span>-&gt;next;
+    memcpy(tmp, <span class="keyword">this</span>, sizeof(Node));
+    memcpy(<span class="keyword">this</span>, q, sizeof(Node));
+    memcpy(q, tmp, sizeof(Node));
     }
 
-    <span class="keyword">return</span> <span class="keyword">l</span>;
-}
-</code></pre><p>public:<br>    NodeList() {<br>        head = new Node();<br>        head-&gt;value = 0;<br>        head-&gt;next = NULL;<br>    }</p>
-<pre><code>~NodeList() {
-    Node<span class="keyword">*</span> p = head;
-    Node<span class="keyword">*</span> q = NULL;
-    while (p != NULL) {
+};
+
+<span class="keyword">class</span> NodeList {
+<span class="keyword">private</span>:
+    Node* head;
+
+    <span class="comment">/**
+     * 找到p的前置节点
+     */</span>
+    Node*find_pre(Node *p) {
+    Node* l = head;
+
+    <span class="keyword">while</span> (l-&gt;<span class="keyword">next</span> != p) {
+        l = l-&gt;<span class="keyword">next</span>;
+    }
+
+    <span class="keyword">return</span> l;
+    }
+
+<span class="keyword">public</span>:
+    NodeList() {
+    head = <span class="keyword">new</span> Node();
+    head-&gt;value = <span class="number">0</span>;
+    head-&gt;<span class="keyword">next</span> = <span class="keyword">NULL</span>;
+    }
+
+    ~NodeList() {
+    Node* p = head;
+    Node* q = <span class="keyword">NULL</span>;
+    <span class="keyword">while</span> (p != <span class="keyword">NULL</span>) {
         q = p;
-        p = p-&gt;next;
-        delete q;
+        p = p-&gt;<span class="keyword">next</span>;
+        <span class="keyword">delete</span> q;
     }
-}
+    }
 
-/<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> 在链表末尾追加
- <span class="keyword">*</span>/
-void add(Node<span class="keyword">*</span> p) {
-    Node<span class="keyword">*</span> q = find_pre(NULL);
-    q-&gt;next = p;
-    p-&gt;next = NULL;
-}
+    <span class="comment">/**
+     * 在链表末尾追加
+     */</span>
+    <span class="keyword">void</span> add(Node* p) {
+    Node* q = find_pre(<span class="keyword">NULL</span>);
+    q-&gt;<span class="keyword">next</span> = p;
+    p-&gt;<span class="keyword">next</span> = <span class="keyword">NULL</span>;
+    }
 
-/<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> 在链表节点p之前插入q,这种实现的复杂度O(n)
- <span class="keyword">*</span>/
-void insert(Node<span class="keyword">*</span> p, Node<span class="keyword">*</span> q) {
-    Node<span class="keyword">*</span> l = find_pre(p);
+    <span class="comment">/**
+     * 在链表节点p之前插入q,这种实现的复杂度O(n)
+     */</span>
+    <span class="keyword">void</span> insert(Node* p, Node* q) {
+    Node* l = find_pre(p);
 
-    l-&gt;next = q;
-    q-&gt;next = p;
-}
+    l-&gt;<span class="keyword">next</span> = q;
+    q-&gt;<span class="keyword">next</span> = p;
+    }
 
-/<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> 在链表节点p之前插入q,这种实现的复杂度O(1)
- <span class="keyword">*</span>/
-void quick_insert(Node<span class="keyword">*</span> p, Node<span class="keyword">*</span> q) {
+    <span class="comment">/**
+     * 在链表节点p之前插入q,这种实现的复杂度O(1)
+     */</span>
+    <span class="keyword">void</span> quick_insert(Node* p, Node* q) {
     p-&gt;exchange(q);
-    p-&gt;next = q;
-}
+    p-&gt;<span class="keyword">next</span> = q;
+    }
 
-/<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> 移除p，时间复杂度O(n)
- <span class="keyword">*</span>/
-void remove(Node<span class="keyword">*</span> p) {
-    Node<span class="keyword">*</span> q = find_pre(p);
-    q-&gt;next = NULL;
-    delete p;
-}
+    <span class="comment">/**
+     * 移除p，时间复杂度O(n)
+     */</span>
+    <span class="keyword">void</span> remove(Node* p) {
+    Node* q = find_pre(p);
+    q-&gt;<span class="keyword">next</span> = <span class="keyword">NULL</span>;
+    <span class="keyword">delete</span> p;
+    }
 
-/<span class="keyword">*</span><span class="keyword">*</span>
- <span class="keyword">*</span> 快速移除p，时间复杂度O(1)
- <span class="keyword">*</span>/
-void quick_remove(Node<span class="keyword">*</span> p) {
-    //最后一个节点，没办法，只能用慢删除
-    if (p-&gt;next == NULL) {
+    <span class="comment">/**
+     * 快速移除p，时间复杂度O(1)
+     */</span>
+    <span class="keyword">void</span> quick_remove(Node* p) {
+    <span class="comment">//最后一个节点，没办法，只能用慢删除</span>
+    <span class="keyword">if</span> (p-&gt;<span class="keyword">next</span> == <span class="keyword">NULL</span>) {
         remove(p);
     }
-    Node<span class="keyword">*</span> q = p-&gt;next;
-    p-&gt;exchange(p-&gt;next);
-    delete q;
-}
-</code></pre><p>};<br>```</p>
+    Node* q = p-&gt;<span class="keyword">next</span>;
+    p-&gt;exchange(p-&gt;<span class="keyword">next</span>);
+    <span class="keyword">delete</span> q;
+    }
 
+};
+</code></pre>
         
         
         <p class="article-more-link">
