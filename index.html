@@ -81,28 +81,113 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/03/hello-world/" title="Hello World" itemprop="url">Hello World</a>
+      <a href="/2015/05/10/单链表O(1)插入删除/" title="O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������" itemprop="url">O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
 		
   <p class="article-time">
-    <time datetime="2015-05-03T10:12:16.252Z" itemprop="datePublished"> 发表于 2015-05-03</time>
+    <time datetime="2015-05-10T03:45:27.000Z" itemprop="datePublished"> 发表于 2015-05-10</time>
     
   </p>
 </header>
     <div class="article-content">
         
-        <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+        <h1 id="O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������">O(1)���Ӷ�ʵ�ֵ������Ĳ���ɾ������</h1><h2 id="����">����</h2><pre><code>������ָ��ĳ���ڵ�֮ǰ����һ���µĽڵ㣬����Ҫ�ҵ�ǰ�ýڵ㣬����ʱ�临�Ӷ���<span class="function"><span class="title">O</span><span class="params">(n)</span></span>������ʵ��<span class="function"><span class="title">O</span><span class="params">(<span class="number">1</span>)</span></span>�Ĳ����أ����ǵû�һ��˼ά��ʽ���϶��ǲ�����ǰ�ýڵ㣬�����ǿ��Խ����ڵ��ʹ������ڵ���ֵ������ǰ�ýڵ���nextָ��ֵû�䣬����ָ�����ڴ���ַ��ֵ�Ѿ����½ڵ���ֵ�ˡ�
+</code></pre><h2 id="ɾ��">ɾ��</h2><pre><code>˼·�Ͳ�����˼·����һ�������ǽ����ڵ�������<span class="keyword">next</span>�ڵ㣬��������<span class="keyword">next</span>�ڵ�Ϊ<span class="keyword">NULL</span>,�Ǿ�û�취�ˣ�������ʵʵ�ҵ���һ���ڵ㡣
+</code></pre><hr>
+<p>ֱ���ϴ��룺</p>
+<p>������c<br>    class Node {<br>public:<br>    int value;<br>    Node*   next;</p>
+<pre><code>~Node() {
+    <span class="keyword">if</span> (next != NULL) {
+        <span class="keyword">delete</span> next;
+    }
+}
+
+<span class="comment">/**
+ * ��q�����ڴ�ֵ
+ */</span>
+<span class="function"><span class="keyword">void</span> <span class="title">exchange</span><span class="params">(Node* q)</span> </span>{
+    Node* tmp = <span class="keyword">new</span> Node();
+    <span class="built_in">memcpy</span>(tmp, <span class="keyword">this</span>, <span class="keyword">sizeof</span>(Node));
+    <span class="built_in">memcpy</span>(<span class="keyword">this</span>, q, <span class="keyword">sizeof</span>(Node));
+    <span class="built_in">memcpy</span>(q, tmp, <span class="keyword">sizeof</span>(Node));
+}
+</code></pre><p>};</p>
+<p>class NodeList {<br>private:<br>    Node* head;</p>
+<pre><code><span class="comment">/**
+ * �ҵ�p��ǰ�ýڵ�
+ */</span>
+Node*find_pre(Node *p) {
+    Node* <span class="keyword">l</span> = head;
+
+    <span class="keyword">while</span> (<span class="keyword">l</span>-&gt;next != p) {
+        <span class="keyword">l</span> = <span class="keyword">l</span>-&gt;next;
+    }
+
+    <span class="keyword">return</span> <span class="keyword">l</span>;
+}
+</code></pre><p>public:<br>    NodeList() {<br>        head = new Node();<br>        head-&gt;value = 0;<br>        head-&gt;next = NULL;<br>    }</p>
+<pre><code>~NodeList() {
+    Node<span class="keyword">*</span> p = head;
+    Node<span class="keyword">*</span> q = NULL;
+    while (p != NULL) {
+        q = p;
+        p = p-&gt;next;
+        delete q;
+    }
+}
+
+/<span class="keyword">*</span><span class="keyword">*</span>
+ <span class="keyword">*</span> ������ĩβ׷��
+ <span class="keyword">*</span>/
+void add(Node<span class="keyword">*</span> p) {
+    Node<span class="keyword">*</span> q = find_pre(NULL);
+    q-&gt;next = p;
+    p-&gt;next = NULL;
+}
+
+/<span class="keyword">*</span><span class="keyword">*</span>
+ <span class="keyword">*</span> �������ڵ�p֮ǰ����q,����ʵ�ֵĸ��Ӷ�O(n)
+ <span class="keyword">*</span>/
+void insert(Node<span class="keyword">*</span> p, Node<span class="keyword">*</span> q) {
+    Node<span class="keyword">*</span> l = find_pre(p);
+
+    l-&gt;next = q;
+    q-&gt;next = p;
+}
+
+/<span class="keyword">*</span><span class="keyword">*</span>
+ <span class="keyword">*</span> �������ڵ�p֮ǰ����q,����ʵ�ֵĸ��Ӷ�O(1)
+ <span class="keyword">*</span>/
+void quick_insert(Node<span class="keyword">*</span> p, Node<span class="keyword">*</span> q) {
+    p-&gt;exchange(q);
+    p-&gt;next = q;
+}
+
+/<span class="keyword">*</span><span class="keyword">*</span>
+ <span class="keyword">*</span> �Ƴ�p��ʱ�临�Ӷ�O(n)
+ <span class="keyword">*</span>/
+void remove(Node<span class="keyword">*</span> p) {
+    Node<span class="keyword">*</span> q = find_pre(p);
+    q-&gt;next = NULL;
+    delete p;
+}
+
+/<span class="keyword">*</span><span class="keyword">*</span>
+ <span class="keyword">*</span> �����Ƴ�p��ʱ�临�Ӷ�O(1)
+ <span class="keyword">*</span>/
+void quick_remove(Node<span class="keyword">*</span> p) {
+    //����һ���ڵ㣬û�취��ֻ������ɾ��
+    if (p-&gt;next == NULL) {
+        remove(p);
+    }
+    Node<span class="keyword">*</span> q = p-&gt;next;
+    p-&gt;exchange(p-&gt;next);
+    delete q;
+}
+</code></pre><p>};<br>```</p>
 
         
         
@@ -122,7 +207,7 @@
 <div class="comments-count">
 	
 	  	<span></span>
-		<a href="/2015/05/03/hello-world/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/03/hello-world/" data-count-type="comments">&nbsp;</a>
+		<a href="/2015/05/10/单链表O(1)插入删除/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/10/单链表O(1)插入删除/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 
