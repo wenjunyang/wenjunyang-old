@@ -95,13 +95,6 @@
 </header>
 	<div class="article-content">
 		
-		<div id="toc" class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#插入"><span class="toc-number">1.</span> <span class="toc-text">插入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#删除"><span class="toc-number">2.</span> <span class="toc-text">删除</span></a></li></ol>
-		
-		</div>
-		
 		<h2 id="插入">插入</h2><pre><code>插入是指在某个节点之前插入一个新的节点，由于要找到前置节点，所以时间复杂度是<span class="function"><span class="title">O</span><span class="params">(n)</span></span>。怎样实现<span class="function"><span class="title">O</span><span class="params">(<span class="number">1</span>)</span></span>的插入呢？我们得换一种思维方式，肯定是不能找前置节点，但我们可以交换节点和待插入节点的值，这样前置节点的next指针值没变，但是指向的内存地址的值已经是新节点的值了。
 </code></pre><h2 id="删除">删除</h2><pre><code>思路和插入的思路基本一样，就是交换节点和他的<span class="keyword">next</span>节点，但是如何<span class="keyword">next</span>节点为<span class="keyword">NULL</span>,那就没办法了，得老老实实找到上一个节点。
 </code></pre><hr>
@@ -303,10 +296,6 @@
     <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3283060652&verifier=bb6a83de&dpc=1"></iframe>
 </div>
 
-
-  <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
-</div>
 
 </aside>
 </div>
