@@ -11,15 +11,15 @@
     
 
     
-    <meta name="description" content="love it, love life,">
+    <meta name="description" content="love it, love you,">
 <meta property="og:type" content="website">
 <meta property="og:title" content="今夕何夕">
 <meta property="og:url" content="http://wendale.cn/index.html">
 <meta property="og:site_name" content="今夕何夕">
-<meta property="og:description" content="love it, love life,">
+<meta property="og:description" content="love it, love you,">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="今夕何夕">
-<meta name="twitter:description" content="love it, love life,">
+<meta name="twitter:description" content="love it, love you,">
 
     
     <link rel="alternative" href="/atom.xml" title="今夕何夕" type="application/atom+xml">
@@ -328,6 +328,95 @@
 
 
 
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/10/digit_recognizer/" title="kaggle digit recognizer之PCA+KNN解法" itemprop="url">kaggle digit recognizer之PCA+KNN解法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-10T03:45:27.000Z" itemprop="datePublished"> 发表于 2015-05-10</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="背景">背景</h2><pre><code>一直想通过比赛练习什么的加强对机器学习算法的理解（工作都没用到什么机器学习算法），最近发现[<span class="link_label">kaggele</span>](<span class="link_url">"https://www.kaggle.com/"</span>)是一个不错网站。就找了上面一道名Digit Recognizer习题练手，借鉴多方观点，决定先尝试pca+knn方法（主要是我觉得比较简单利于理解）。以后再试试逻辑回归、SVM、贝叶斯、deep learning吧。
+</code></pre><h2 id="思路">思路</h2><pre><code>思路其实很简单了，KNN是一个比较容易理解的分类算法。它的原理说起来也很简单，就是待分类数据的k个已经分好类的邻居，k个邻居中出现最多的就作为它的分类了。其实knn也可以用来做回归，只是不采用投票的方式，而是取k个邻居的均值，更准确点是按距离加权的中值。那么怎么衡量两个数据间的距离呢，算法有很多种，最常用的就是欧式距离拉.那么回到本题，每个图片其实是由28*28个像素组成，即数据的维度是784，如果直接上knn，由于维度太大，计算量也相当高了。目测普通单个机器得个一天吧。那么就可以使用到<span class="keyword">pca</span>降维了。我选择<span class="keyword">pca</span>降维度降到64，单机下几分钟就出结果了。提交几次终于成功了，正确率0.97186，二百多名，好开森，知足常乐，哈哈。代码就很简单了，下面贴出来：
+</code></pre><h2 id="代码">代码</h2><pre><code>train &lt;- <span class="keyword">read</span>.csv(<span class="string">"train.csv"</span>, header=TRUE)
+<span class="keyword">test</span> &lt;- <span class="keyword">read</span>.csv(<span class="string">"test.csv"</span>, header=TRUE)
+
+train &lt;- <span class="keyword">as</span>.<span class="literal">matrix</span>(train)
+<span class="keyword">test</span> &lt;- <span class="keyword">as</span>.<span class="literal">matrix</span>(<span class="keyword">test</span>)
+
+labels &lt;- <span class="keyword">as</span>.numeric(train[,1])
+train &lt;- train[,-1]
+
+all &lt;- rbind(train, <span class="keyword">test</span>)
+
+<span class="comment">//计算主成分</span>
+<span class="keyword">pca</span> &lt;- princomp(all)
+
+<span class="comment">//对训练数据降维转换</span>
+train &lt;- train %*% <span class="keyword">pca</span><span class="label">$loadings</span>[,1:64]
+<span class="comment">//对测试数据降维转换</span>
+<span class="keyword">test</span> &lt;- <span class="keyword">test</span> %*% <span class="keyword">pca</span><span class="label">$loadings</span>[,1:64]
+
+<span class="comment">//pre即是最终结果</span>
+pre &lt;- knn(train, <span class="keyword">test</span>, labels, 9)    
+</code></pre><h2 id="细节">细节</h2><pre><code>第一次直接提交，报错了，格式错误。试题明明写的每行只需写出结果就行。搜了下才发现提交的结果要是csv格式的。第一行为固定标题，然后是数据，第一列<span class="property">id</span>，第二列识别结果，<span class="property">id</span>从<span class="number">1</span>递增。比如：
+ImageId,Label
+<span class="number">1</span>,<span class="number">2</span>
+<span class="number">2</span>,<span class="number">0</span>
+<span class="number">3</span>,<span class="number">9</span>
+<span class="number">4</span>,<span class="number">9</span>
+...
+</code></pre><h2 id="排名截图">排名截图</h2><p><img src="images/kaggle_first.png" alt=""></p>
+<hr>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/kaggle/">kaggle</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/05/10/digit_recognizer/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/10/digit_recognizer/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
 
 </div>
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
@@ -347,6 +436,10 @@
 				<li><a href="/tags/笔试题/" title="笔试题">笔试题<sup>2</sup></a></li>
 			
 		
+			
+				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>1</sup></a></li>
+			
+		
 		</ul>
 </div>
 
@@ -364,6 +457,12 @@
           <li>
             
             	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://qleilei.taobao.com/" target="_blank" title="蕾蕾的店铺">蕾蕾的店铺</a>
             
           </li>
         
