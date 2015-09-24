@@ -81,6 +81,84 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/09/24/hive-udf使用/" title="hive udf使用" itemprop="url">hive udf使用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
+		
+  <p class="article-time">
+    <time datetime="2015-09-24T10:21:35.000Z" itemprop="datePublished"> 发表于 2015-09-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>hive以udf的方式提供了扩展hive的方法。每个udf只需要继承hive指定的类，通过固定的方法名识别出提供的方法。工作中经常遇到这种场景：计算周累计或者月累计。计算的逻辑是判断今天与昨天是否属于同一个周（月），如果是，结果为昨天结果加上今天的结果，否则结果为今天的结果。用hql如下：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CASE WHEN WEEKOFYEAR('$&#123;TIME&#125;')= WEEKOFYEAR('$&#123;BEFORETIME&#125;') AND F1.LOGIN_YN = 'Y' THEN</span><br><span class="line">    COALESCE(F2.WK_DAY_CNT,0) + 1</span><br><span class="line">WHEN WEEKOFYEAR('$&#123;TIME&#125;')= WEEKOFYEAR('$&#123;BEFORETIME&#125;') THEN COALESCE(F2.WK_DAY_CNT,0) </span><br><span class="line">    WHEN F1.LOGIN_YN = 'Y' THEN 1 ELSE 0 <span class="operator"><span class="keyword">END</span>)</span></span><br></pre></td></tr></table></figure></p>
+<p>现在我想把这段代码用一个udf实现:<br><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">week_acc</span>(<span class="attr_selector">[time]</span>, <span class="attr_selector">[beforeTime]</span>, value, accValue)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>现在开始动手实现：</p>
+<ol>
+<li><p>新建maven工程，pom文件添加hive的开发工具包以来以及joda依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">groupId</span>&gt;</span>org.apache.hive<span class="tag">&lt;/<span class="title">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">artifactId</span>&gt;</span>hive-pdk<span class="tag">&lt;/<span class="title">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">version</span>&gt;</span>0.10.0<span class="tag">&lt;/<span class="title">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">groupId</span>&gt;</span>org.apache.hadoop<span class="tag">&lt;/<span class="title">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">artifactId</span>&gt;</span>hadoop-core<span class="tag">&lt;/<span class="title">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">version</span>&gt;</span>1.2.1<span class="tag">&lt;/<span class="title">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">groupId</span>&gt;</span>joda-time<span class="tag">&lt;/<span class="title">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">artifactId</span>&gt;</span>joda-time<span class="tag">&lt;/<span class="title">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">version</span>&gt;</span>2.8.2<span class="tag">&lt;/<span class="title">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编写自定义的udf类，继承UDF类</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">WeekAccumulator</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">UDF</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    public <span class="type">LongWritable</span> evaluate(<span class="type">Text</span> timeStr,</span><br><span class="line">                                 <span class="type">Text</span> beforeTimeStr,</span><br><span class="line">                                 <span class="type">LongWritable</span> todayValue,</span><br><span class="line">                                 <span class="type">LongWritable</span> beforeAccumulator) &#123;</span><br><span class="line">        <span class="keyword">return</span> inSamePeriod(timeStr, beforeTimeStr) ?</span><br><span class="line">                <span class="keyword">new</span> <span class="type">LongWritable</span>(todayValue.get() + beforeAccumulator.get()) : todayValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public <span class="type">LongWritable</span> evaluate(<span class="type">LongWritable</span> todayValue, <span class="type">LongWritable</span> beforeAccumulator) &#123;</span><br><span class="line">        <span class="type">DateTime</span> dateTime = <span class="keyword">new</span> <span class="type">DateTime</span>();</span><br><span class="line">        <span class="type">Text</span> timeStr = <span class="keyword">new</span> <span class="type">Text</span>(dateTime.toString(<span class="string">"yyyy-MM-dd"</span>));</span><br><span class="line">        <span class="type">Text</span> beforeTimeStr = <span class="keyword">new</span> <span class="type">Text</span>(dateTime.minusDays(<span class="number">1</span>).toString(<span class="string">"yyyy-MM-dd"</span>));</span><br><span class="line">        <span class="keyword">return</span> evaluate(timeStr, beforeTimeStr, todayValue, beforeAccumulator);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> boolean inSamePeriod(<span class="type">Text</span> timeStr, <span class="type">Text</span> beforeTimeStr) &#123;</span><br><span class="line">        <span class="type">DateTime</span> thisDate = <span class="keyword">new</span> <span class="type">DateTime</span>(timeStr.toString());</span><br><span class="line">        <span class="type">DateTime</span> beforeDate = <span class="keyword">new</span> <span class="type">DateTime</span>(beforeTimeStr.toString());</span><br><span class="line">        <span class="keyword">return</span> thisDate.getWeekOfWeekyear() == beforeDate.getWeekOfWeekyear();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>3.打包（注意要把依赖的jar包也打进jar包里，否则运行时会找不到依赖的jar包。）</p>
+<ol>
+<li>将jar包copy到hdfs中</li>
+<li>编辑hive conf文件夹下的.hiverc文件(没有手动创建),文件内容：<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add jar hdfs://&#123;MASTER&#125;/&#123;udf path&#125;</span><br><span class="line"><span class="operator"><span class="keyword">create</span> <span class="keyword">temporary</span> <span class="keyword">function</span> week_acc <span class="keyword">as</span> <span class="string">'&#123;class&#125;'</span>;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<hr>
+<p><strong>打开hive cli，输入:</strong><br><code>select week_acc(&#39;2015-09-14&#39;, &#39;2015-09-13&#39;, 1, 10)</code><br><strong>执行成功，那么udf就完成了。</strong></p>
+<h2 id="注意事项">注意事项</h2><p>如果hive设置hive.exec.mode.local.auto（默认false）为true的话，上面命令会执行失败，提示jar文件找不到。只能把这个配置改成false了。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/hive/">hive</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/09/24/hive-udf使用/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/09/24/hive-udf使用/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/09/23/kaggle-digit-recognizer之logistic-regression解法/" title="kaggle digit recognizer之logistic regression解法" itemprop="url">kaggle digit recognizer之logistic regression解法</a>
   </h1>
   <p class="article-author">By
@@ -98,26 +176,8 @@
 <p><strong>逻辑回归</strong>是一种常用的分类算法（虽然名称带着回归，其实是分类），在广告行业中运用非常广泛，主要用来判断用户是否点击某个广告，以此实现广告的最佳投放效果。逻辑回归一般用来解决二分类的问题，即某件事情只有两种可能，通过训练数据得到预测数据发生某种情况的可能性，一般如果大于0.5我们认为该事件会发生，小于0.5则该事件的互斥事件会发生。</p>
 </blockquote>
 <h2 id="本题思路">本题思路</h2><p>由于数字有10种可能，所以这是一种多分类的场景。逻辑回归在这种场景下的一般做法是：如果有n种分类，则做n次逻辑回归，每次把是该种类的视为一类，把非该种类的视为另一类，这样可以计算出n个可能性，取可能性最大的作为分类。针对本题我也是这么做的，但是效果非常不理想，正确率仅为0.80（tnn的还运行了好几个小时）。但是作为通过这次练习，大致熟悉了逻辑回归。</p>
-<h2 id="代码">代码</h2><pre><code>train &lt;- <span class="keyword">read</span>.csv(<span class="string">"data/train.csv"</span>, header=TRUE)
-<span class="keyword">test</span> &lt;- <span class="keyword">read</span>.csv(<span class="string">"data/test.csv"</span>, header=TRUE)
-
-labels &lt;- train[,1]
-train &lt;- train[,-1]
-
-#create formula
-xnam &lt;- paste0(<span class="string">"pixel"</span>, c(0:783))
-formula &lt;- <span class="keyword">as</span>.formula(paste(<span class="string">"lr.labels ~ "</span>, paste(xnam, <span class="keyword">collapse</span> = <span class="string">"+"</span>)))
-
-pre &lt;- <span class="keyword">list</span>()
-<span class="keyword">for</span> (i <span class="keyword">in</span> 0 : 9) {
-    lr.labels &lt;- ifelse(labels == i, 1, 0)
-    logic.<span class="keyword">fit</span> &lt;- <span class="keyword">glm</span>(formula = formula, data = cbind(lr.labels, train), family=<span class="literal">binomial</span>(link=<span class="string">"logit"</span>))
-    p &lt;- <span class="keyword">predict</span>(logic.<span class="keyword">fit</span>, <span class="keyword">test</span>)
-    pre &lt;- cbind(pre, <span class="literal">exp</span>(p) / 1 + <span class="literal">exp</span>(p))
-}
-
-result &lt;- max.col(pre) - 1
-</code></pre><h2 id="说明">说明</h2><p>glm是R广义线性模型函数，可以处理很多种回归，通过family参数控制回归类型，主要有：</p>
+<h2 id="代码">代码</h2><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">train &lt;- <span class="keyword">read</span>.csv(<span class="string">"data/train.csv"</span>, header=TRUE)</span><br><span class="line"><span class="keyword">test</span> &lt;- <span class="keyword">read</span>.csv(<span class="string">"data/test.csv"</span>, header=TRUE)</span><br><span class="line"></span><br><span class="line">labels &lt;- train[,1]</span><br><span class="line">train &lt;- train[,-1]</span><br><span class="line"></span><br><span class="line">#create formula</span><br><span class="line">xnam &lt;- paste0(<span class="string">"pixel"</span>, c(0:783))</span><br><span class="line">formula &lt;- <span class="keyword">as</span>.formula(paste(<span class="string">"lr.labels ~ "</span>, paste(xnam, <span class="keyword">collapse</span> = <span class="string">"+"</span>)))</span><br><span class="line"></span><br><span class="line">pre &lt;- <span class="keyword">list</span>()</span><br><span class="line"><span class="keyword">for</span> (i <span class="keyword">in</span> 0 : 9) &#123;</span><br><span class="line">    lr.labels &lt;- ifelse(labels == i, 1, 0)</span><br><span class="line">    logic.<span class="keyword">fit</span> &lt;- <span class="keyword">glm</span>(formula = formula, data = cbind(lr.labels, train), family=<span class="literal">binomial</span>(link=<span class="string">"logit"</span>))</span><br><span class="line">    p &lt;- <span class="keyword">predict</span>(logic.<span class="keyword">fit</span>, <span class="keyword">test</span>)</span><br><span class="line">    pre &lt;- cbind(pre, <span class="literal">exp</span>(p) / 1 + <span class="literal">exp</span>(p))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">result &lt;- max.col(pre) - 1</span><br></pre></td></tr></table></figure>
+<h2 id="说明">说明</h2><p>glm是R广义线性模型函数，可以处理很多种回归，通过family参数控制回归类型，主要有：</p>
 <ol>
 <li>binomal(link=’logit’)         ——响应变量服从二项分布，连接函数为logit，即logistic回归</li>
 <li>binomal(link=’probit’)       ——响应变量服从二项分布，连接函数为probit</li>
@@ -173,7 +233,7 @@ result &lt;- max.col(pre) - 1
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/09/16/kaggle digit recognizer之PCA+KNN解法/" title="kaggle digit recognizer之PCA+KNN解法" itemprop="url">kaggle digit recognizer之PCA+KNN解法</a>
+      <a href="/2015/09/16/kaggle-digit-recognizer之PCA+KNN解法/" title="kaggle digit recognizer之PCA+KNN解法" itemprop="url">kaggle digit recognizer之PCA+KNN解法</a>
   </h1>
   <p class="article-author">By
        
@@ -188,30 +248,8 @@ result &lt;- max.col(pre) - 1
         
         <h2 id="背景">背景</h2><pre><code>一直想通过比赛练习什么的加强对机器学习算法的理解（工作都没用到什么机器学习算法），最近发现[<span class="link_label">kaggele</span>](<span class="link_url">"https://www.kaggle.com/"</span>)是一个不错网站。就找了上面一道名Digit Recognizer习题练手，借鉴多方观点，决定先尝试pca+knn方法（主要是我觉得比较简单利于理解）。以后再试试逻辑回归、SVM、贝叶斯、deep learning吧。
 </code></pre><h2 id="思路">思路</h2><pre><code>思路其实很简单了，KNN是一个比较容易理解的分类算法。它的原理说起来也很简单，就是待分类数据的k个已经分好类的邻居，k个邻居中出现最多的就作为它的分类了。其实knn也可以用来做回归，只是不采用投票的方式，而是取k个邻居的均值，更准确点是按距离加权的中值。那么怎么衡量两个数据间的距离呢，算法有很多种，最常用的就是欧式距离拉.那么回到本题，每个图片其实是由28*28个像素组成，即数据的维度是784，如果直接上knn，由于维度太大，计算量也相当高了。目测普通单个机器得个一天吧。那么就可以使用到<span class="keyword">pca</span>降维了。我选择<span class="keyword">pca</span>降维度降到64，单机下几分钟就出结果了。提交几次终于成功了，正确率0.97186，二百多名，好开森，知足常乐，哈哈。代码就很简单了，下面贴出来：
-</code></pre><h2 id="代码">代码</h2><pre><code>library(<span class="keyword">class</span>)
-
-train &lt;- <span class="keyword">read</span>.csv(<span class="string">"train.csv"</span>, header=TRUE)
-<span class="keyword">test</span> &lt;- <span class="keyword">read</span>.csv(<span class="string">"test.csv"</span>, header=TRUE)
-
-train &lt;- <span class="keyword">as</span>.<span class="literal">matrix</span>(train)
-<span class="keyword">test</span> &lt;- <span class="keyword">as</span>.<span class="literal">matrix</span>(<span class="keyword">test</span>)
-
-labels &lt;- <span class="keyword">as</span>.numeric(train[,1])
-train &lt;- train[,-1]
-
-all &lt;- rbind(train, <span class="keyword">test</span>)
-
-<span class="comment">//计算主成分</span>
-<span class="keyword">pca</span> &lt;- princomp(all)
-
-<span class="comment">//对训练数据降维转换</span>
-train &lt;- train %*% <span class="keyword">pca</span><span class="label">$loadings</span>[,1:64]
-<span class="comment">//对测试数据降维转换</span>
-<span class="keyword">test</span> &lt;- <span class="keyword">test</span> %*% <span class="keyword">pca</span><span class="label">$loadings</span>[,1:64]
-
-<span class="comment">//pre即是最终结果</span>
-pre &lt;- knn(train, <span class="keyword">test</span>, labels, 9)    
-</code></pre><h2 id="细节">细节</h2><pre><code>第一次直接提交，报错了，格式错误。试题明明写的每行只需写出结果就行。搜了下才发现提交的结果要是csv格式的。第一行为固定标题，然后是数据，第一列<span class="property">id</span>，第二列识别结果，<span class="property">id</span>从<span class="number">1</span>递增。比如：
+</code></pre><h2 id="代码">代码</h2><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">library(<span class="keyword">class</span>)</span><br><span class="line"></span><br><span class="line">train &lt;- <span class="keyword">read</span>.csv(<span class="string">"train.csv"</span>, header=TRUE)</span><br><span class="line"><span class="keyword">test</span> &lt;- <span class="keyword">read</span>.csv(<span class="string">"test.csv"</span>, header=TRUE)</span><br><span class="line"></span><br><span class="line">train &lt;- <span class="keyword">as</span>.<span class="literal">matrix</span>(train)</span><br><span class="line"><span class="keyword">test</span> &lt;- <span class="keyword">as</span>.<span class="literal">matrix</span>(<span class="keyword">test</span>)</span><br><span class="line"></span><br><span class="line">labels &lt;- <span class="keyword">as</span>.numeric(train[,1])</span><br><span class="line">train &lt;- train[,-1]</span><br><span class="line"></span><br><span class="line">all &lt;- rbind(train, <span class="keyword">test</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//计算主成分</span></span><br><span class="line"><span class="keyword">pca</span> &lt;- princomp(all)</span><br><span class="line"></span><br><span class="line"><span class="comment">//对训练数据降维转换</span></span><br><span class="line">train &lt;- train %*% <span class="keyword">pca</span><span class="label">$loadings</span>[,1:64]</span><br><span class="line"><span class="comment">//对测试数据降维转换</span></span><br><span class="line"><span class="keyword">test</span> &lt;- <span class="keyword">test</span> %*% <span class="keyword">pca</span><span class="label">$loadings</span>[,1:64]</span><br><span class="line"></span><br><span class="line"><span class="comment">//pre即是最终结果</span></span><br><span class="line">pre &lt;- knn(train, <span class="keyword">test</span>, labels, 9)</span><br></pre></td></tr></table></figure>
+<h2 id="细节">细节</h2><pre><code>第一次直接提交，报错了，格式错误。试题明明写的每行只需写出结果就行。搜了下才发现提交的结果要是csv格式的。第一行为固定标题，然后是数据，第一列<span class="property">id</span>，第二列识别结果，<span class="property">id</span>从<span class="number">1</span>递增。比如：
 ImageId,Label
 <span class="number">1</span>,<span class="number">2</span>
 <span class="number">2</span>,<span class="number">0</span>
@@ -244,7 +282,7 @@ ImageId,Label
 <div class="comments-count">
 	
 	  	<span></span>
-		<a href="/2015/09/16/kaggle digit recognizer之PCA+KNN解法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/09/16/kaggle digit recognizer之PCA+KNN解法/" data-count-type="comments">&nbsp;</a>
+		<a href="/2015/09/16/kaggle-digit-recognizer之PCA+KNN解法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/09/16/kaggle-digit-recognizer之PCA+KNN解法/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 
@@ -280,32 +318,7 @@ ImageId,Label
         <blockquote>
 <p>如何优雅地随机抽取呢？</p>
 </blockquote>
-<pre><code>/**
- * 随机生成一个[<span class="number">0</span>, n-<span class="number">1</span>]的数
- */
-<span class="type">int</span> rand_index(<span class="type">int</span> n) {
-    srand(time(<span class="type">NULL</span>));
-    <span class="keyword">return</span> rand() % n;
-}
-/**
- * 问题描述：从数组<span class="type">array</span>中随机抽取extract_num个元素，组成新的数组返回。
- *
- */
-<span class="type">int</span>* random_extract(<span class="type">int</span> <span class="type">array</span>[], <span class="type">int</span> array_num, <span class="type">int</span> extract_num) {
-
-    <span class="type">int</span>* <span class="literal">result</span> = (<span class="type">int</span>*)malloc(extract_num * sizeof(<span class="type">int</span>));
-
-    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; extract_num; ++i) {
-        <span class="type">int</span> tmp = <span class="type">array</span>[array_num - <span class="number">1</span> - i];
-        <span class="type">int</span> index = rand_index(array_num - <span class="number">1</span> - i);
-        <span class="type">array</span>[array_num - <span class="number">1</span> - i] = <span class="type">array</span>[index];
-        <span class="type">array</span>[index] = tmp;
-        <span class="literal">result</span>[i] = tmp;
-    }
-
-    <span class="keyword">return</span> <span class="literal">result</span>;
-}
-</code></pre>
+<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 随机生成一个[<span class="number">0</span>, n-<span class="number">1</span>]的数</span><br><span class="line"> */</span><br><span class="line"><span class="type">int</span> rand_index(<span class="type">int</span> n) &#123;</span><br><span class="line">    srand(time(<span class="type">NULL</span>));</span><br><span class="line">    <span class="keyword">return</span> rand() % n;</span><br><span class="line">&#125;</span><br><span class="line">/**</span><br><span class="line"> * 问题描述：从数组<span class="type">array</span>中随机抽取extract_num个元素，组成新的数组返回。</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line"><span class="type">int</span>* random_extract(<span class="type">int</span> <span class="type">array</span>[], <span class="type">int</span> array_num, <span class="type">int</span> extract_num) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span>* <span class="literal">result</span> = (<span class="type">int</span>*)malloc(extract_num * sizeof(<span class="type">int</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; extract_num; ++i) &#123;</span><br><span class="line">        <span class="type">int</span> tmp = <span class="type">array</span>[array_num - <span class="number">1</span> - i];</span><br><span class="line">        <span class="type">int</span> index = rand_index(array_num - <span class="number">1</span> - i);</span><br><span class="line">        <span class="type">array</span>[array_num - <span class="number">1</span> - i] = <span class="type">array</span>[index];</span><br><span class="line">        <span class="type">array</span>[index] = tmp;</span><br><span class="line">        <span class="literal">result</span>[i] = tmp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -366,114 +379,8 @@ ImageId,Label
 </code></pre><h2 id="删除">删除</h2><pre><code>思路和插入的思路基本一样，就是交换节点和他的<span class="keyword">next</span>节点，但是如何<span class="keyword">next</span>节点为<span class="keyword">NULL</span>,那就没办法了，得老老实实找到上一个节点。
 </code></pre><hr>
 <p>直接上代码：</p>
-<pre><code><span class="keyword">class</span> Node {
-<span class="keyword">public</span>:
-    <span class="keyword">int</span> value;
-    Node*   <span class="keyword">next</span>;
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">class</span> Node &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">int</span> value;</span><br><span class="line">    Node*   <span class="keyword">next</span>;</span><br><span class="line"></span><br><span class="line">    ~Node() &#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">next</span> != <span class="keyword">NULL</span>) &#123;</span><br><span class="line">	    <span class="keyword">delete</span> <span class="keyword">next</span>;</span><br><span class="line">	&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 与q交换内存值</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">void</span> exchange(Node* q) &#123;</span><br><span class="line">	Node* tmp = <span class="keyword">new</span> Node();</span><br><span class="line">	memcpy(tmp, <span class="keyword">this</span>, sizeof(Node));</span><br><span class="line">	memcpy(<span class="keyword">this</span>, q, sizeof(Node));</span><br><span class="line">	memcpy(q, tmp, sizeof(Node));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> NodeList &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    Node* head;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 找到p的前置节点</span><br><span class="line">     */</span></span><br><span class="line">    Node*find_pre(Node *p) &#123;</span><br><span class="line">	Node* l = head;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (l-&gt;<span class="keyword">next</span> != p) &#123;</span><br><span class="line">	    l = l-&gt;<span class="keyword">next</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> l;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    NodeList() &#123;</span><br><span class="line">	head = <span class="keyword">new</span> Node();</span><br><span class="line">	head-&gt;value = <span class="number">0</span>;</span><br><span class="line">	head-&gt;<span class="keyword">next</span> = <span class="keyword">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ~NodeList() &#123;</span><br><span class="line">	Node* p = head;</span><br><span class="line">	Node* q = <span class="keyword">NULL</span>;</span><br><span class="line">	<span class="keyword">while</span> (p != <span class="keyword">NULL</span>) &#123;</span><br><span class="line">	    q = p;</span><br><span class="line">	    p = p-&gt;<span class="keyword">next</span>;</span><br><span class="line">	    <span class="keyword">delete</span> q;</span><br><span class="line">	&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 在链表末尾追加</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">void</span> add(Node* p) &#123;</span><br><span class="line">	Node* q = find_pre(<span class="keyword">NULL</span>);</span><br><span class="line">	q-&gt;<span class="keyword">next</span> = p;</span><br><span class="line">	p-&gt;<span class="keyword">next</span> = <span class="keyword">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 在链表节点p之前插入q,这种实现的复杂度O(n)</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">void</span> insert(Node* p, Node* q) &#123;</span><br><span class="line">	Node* l = find_pre(p);</span><br><span class="line"></span><br><span class="line">	l-&gt;<span class="keyword">next</span> = q;</span><br><span class="line">	q-&gt;<span class="keyword">next</span> = p;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 在链表节点p之前插入q,这种实现的复杂度O(1)</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">void</span> quick_insert(Node* p, Node* q) &#123;</span><br><span class="line">	p-&gt;exchange(q);</span><br><span class="line">	p-&gt;<span class="keyword">next</span> = q;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 移除p，时间复杂度O(n)</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">void</span> remove(Node* p) &#123;</span><br><span class="line">	Node* q = find_pre(p);</span><br><span class="line">	q-&gt;<span class="keyword">next</span> = <span class="keyword">NULL</span>;</span><br><span class="line">	<span class="keyword">delete</span> p;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 快速移除p，时间复杂度O(1)</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">void</span> quick_remove(Node* p) &#123;</span><br><span class="line">	<span class="comment">//最后一个节点，没办法，只能用慢删除</span></span><br><span class="line">	<span class="keyword">if</span> (p-&gt;<span class="keyword">next</span> == <span class="keyword">NULL</span>) &#123;</span><br><span class="line">	    remove(p);</span><br><span class="line">	&#125;</span><br><span class="line">	Node* q = p-&gt;<span class="keyword">next</span>;</span><br><span class="line">	p-&gt;exchange(p-&gt;<span class="keyword">next</span>);</span><br><span class="line">	<span class="keyword">delete</span> q;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-    ~Node() {
-    <span class="keyword">if</span> (<span class="keyword">next</span> != <span class="keyword">NULL</span>) {
-        <span class="keyword">delete</span> <span class="keyword">next</span>;
-    }
-    }
-
-    <span class="comment">/**
-     * 与q交换内存值
-     */</span>
-    <span class="keyword">void</span> exchange(Node* q) {
-    Node* tmp = <span class="keyword">new</span> Node();
-    memcpy(tmp, <span class="keyword">this</span>, sizeof(Node));
-    memcpy(<span class="keyword">this</span>, q, sizeof(Node));
-    memcpy(q, tmp, sizeof(Node));
-    }
-
-};
-
-<span class="keyword">class</span> NodeList {
-<span class="keyword">private</span>:
-    Node* head;
-
-    <span class="comment">/**
-     * 找到p的前置节点
-     */</span>
-    Node*find_pre(Node *p) {
-    Node* l = head;
-
-    <span class="keyword">while</span> (l-&gt;<span class="keyword">next</span> != p) {
-        l = l-&gt;<span class="keyword">next</span>;
-    }
-
-    <span class="keyword">return</span> l;
-    }
-
-<span class="keyword">public</span>:
-    NodeList() {
-    head = <span class="keyword">new</span> Node();
-    head-&gt;value = <span class="number">0</span>;
-    head-&gt;<span class="keyword">next</span> = <span class="keyword">NULL</span>;
-    }
-
-    ~NodeList() {
-    Node* p = head;
-    Node* q = <span class="keyword">NULL</span>;
-    <span class="keyword">while</span> (p != <span class="keyword">NULL</span>) {
-        q = p;
-        p = p-&gt;<span class="keyword">next</span>;
-        <span class="keyword">delete</span> q;
-    }
-    }
-
-    <span class="comment">/**
-     * 在链表末尾追加
-     */</span>
-    <span class="keyword">void</span> add(Node* p) {
-    Node* q = find_pre(<span class="keyword">NULL</span>);
-    q-&gt;<span class="keyword">next</span> = p;
-    p-&gt;<span class="keyword">next</span> = <span class="keyword">NULL</span>;
-    }
-
-    <span class="comment">/**
-     * 在链表节点p之前插入q,这种实现的复杂度O(n)
-     */</span>
-    <span class="keyword">void</span> insert(Node* p, Node* q) {
-    Node* l = find_pre(p);
-
-    l-&gt;<span class="keyword">next</span> = q;
-    q-&gt;<span class="keyword">next</span> = p;
-    }
-
-    <span class="comment">/**
-     * 在链表节点p之前插入q,这种实现的复杂度O(1)
-     */</span>
-    <span class="keyword">void</span> quick_insert(Node* p, Node* q) {
-    p-&gt;exchange(q);
-    p-&gt;<span class="keyword">next</span> = q;
-    }
-
-    <span class="comment">/**
-     * 移除p，时间复杂度O(n)
-     */</span>
-    <span class="keyword">void</span> remove(Node* p) {
-    Node* q = find_pre(p);
-    q-&gt;<span class="keyword">next</span> = <span class="keyword">NULL</span>;
-    <span class="keyword">delete</span> p;
-    }
-
-    <span class="comment">/**
-     * 快速移除p，时间复杂度O(1)
-     */</span>
-    <span class="keyword">void</span> quick_remove(Node* p) {
-    <span class="comment">//最后一个节点，没办法，只能用慢删除</span>
-    <span class="keyword">if</span> (p-&gt;<span class="keyword">next</span> == <span class="keyword">NULL</span>) {
-        remove(p);
-    }
-    Node* q = p-&gt;<span class="keyword">next</span>;
-    p-&gt;exchange(p-&gt;<span class="keyword">next</span>);
-    <span class="keyword">delete</span> q;
-    }
-
-};
-</code></pre>
         
         
         <p class="article-more-link">
@@ -536,6 +443,10 @@ ImageId,Label
 		
 			
 				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/hive/" title="hive">hive<sup>1</sup></a></li>
 			
 		
 		</ul>

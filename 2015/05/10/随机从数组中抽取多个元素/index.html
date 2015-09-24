@@ -13,52 +13,19 @@
     
     <meta name="description" content="如何优雅地随机抽取呢？
 
-/**
- * 随机生成一个[0, n-1]的数
- */
-int rand_index(int n) {
-    srand(time(NULL));
-    return rand() % n;
-}
-/**
- * 问题描述：从数组array中随机抽取extract_num个元素，组成新的数组返回。
- *
- */
-int* random_extract(int array[">
+12345678910111213141516171819202122232425/** * 随机生成一个[0, n-1]的数 */int rand_index(int n) &amp;#123;    srand(time(NULL));    return rand() % n;&amp;#125;/** * 问题描述：从数组array中随机抽取extract_num个元素，组成新的">
 <meta property="og:type" content="article">
 <meta property="og:title" content="随机从数组中抽取多个元素">
 <meta property="og:url" content="http://wendale.cn/2015/05/10/随机从数组中抽取多个元素/index.html">
 <meta property="og:site_name" content="今夕何夕">
 <meta property="og:description" content="如何优雅地随机抽取呢？
 
-/**
- * 随机生成一个[0, n-1]的数
- */
-int rand_index(int n) {
-    srand(time(NULL));
-    return rand() % n;
-}
-/**
- * 问题描述：从数组array中随机抽取extract_num个元素，组成新的数组返回。
- *
- */
-int* random_extract(int array[">
+12345678910111213141516171819202122232425/** * 随机生成一个[0, n-1]的数 */int rand_index(int n) &amp;#123;    srand(time(NULL));    return rand() % n;&amp;#125;/** * 问题描述：从数组array中随机抽取extract_num个元素，组成新的">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="随机从数组中抽取多个元素">
 <meta name="twitter:description" content="如何优雅地随机抽取呢？
 
-/**
- * 随机生成一个[0, n-1]的数
- */
-int rand_index(int n) {
-    srand(time(NULL));
-    return rand() % n;
-}
-/**
- * 问题描述：从数组array中随机抽取extract_num个元素，组成新的数组返回。
- *
- */
-int* random_extract(int array[">
+12345678910111213141516171819202122232425/** * 随机生成一个[0, n-1]的数 */int rand_index(int n) &amp;#123;    srand(time(NULL));    return rand() % n;&amp;#125;/** * 问题描述：从数组array中随机抽取extract_num个元素，组成新的">
 
     
     <link rel="alternative" href="/atom.xml" title="今夕何夕" type="application/atom+xml">
@@ -134,32 +101,7 @@ int* random_extract(int array[">
 		<blockquote>
 <p>如何优雅地随机抽取呢？</p>
 </blockquote>
-<pre><code>/**
- * 随机生成一个[<span class="number">0</span>, n-<span class="number">1</span>]的数
- */
-<span class="type">int</span> rand_index(<span class="type">int</span> n) {
-    srand(time(<span class="type">NULL</span>));
-    <span class="keyword">return</span> rand() % n;
-}
-/**
- * 问题描述：从数组<span class="type">array</span>中随机抽取extract_num个元素，组成新的数组返回。
- *
- */
-<span class="type">int</span>* random_extract(<span class="type">int</span> <span class="type">array</span>[], <span class="type">int</span> array_num, <span class="type">int</span> extract_num) {
-
-    <span class="type">int</span>* <span class="literal">result</span> = (<span class="type">int</span>*)malloc(extract_num * sizeof(<span class="type">int</span>));
-
-    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; extract_num; ++i) {
-        <span class="type">int</span> tmp = <span class="type">array</span>[array_num - <span class="number">1</span> - i];
-        <span class="type">int</span> index = rand_index(array_num - <span class="number">1</span> - i);
-        <span class="type">array</span>[array_num - <span class="number">1</span> - i] = <span class="type">array</span>[index];
-        <span class="type">array</span>[index] = tmp;
-        <span class="literal">result</span>[i] = tmp;
-    }
-
-    <span class="keyword">return</span> <span class="literal">result</span>;
-}
-</code></pre>  
+<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 随机生成一个[<span class="number">0</span>, n-<span class="number">1</span>]的数</span><br><span class="line"> */</span><br><span class="line"><span class="type">int</span> rand_index(<span class="type">int</span> n) &#123;</span><br><span class="line">    srand(time(<span class="type">NULL</span>));</span><br><span class="line">    <span class="keyword">return</span> rand() % n;</span><br><span class="line">&#125;</span><br><span class="line">/**</span><br><span class="line"> * 问题描述：从数组<span class="type">array</span>中随机抽取extract_num个元素，组成新的数组返回。</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line"><span class="type">int</span>* random_extract(<span class="type">int</span> <span class="type">array</span>[], <span class="type">int</span> array_num, <span class="type">int</span> extract_num) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span>* <span class="literal">result</span> = (<span class="type">int</span>*)malloc(extract_num * sizeof(<span class="type">int</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; extract_num; ++i) &#123;</span><br><span class="line">        <span class="type">int</span> tmp = <span class="type">array</span>[array_num - <span class="number">1</span> - i];</span><br><span class="line">        <span class="type">int</span> index = rand_index(array_num - <span class="number">1</span> - i);</span><br><span class="line">        <span class="type">array</span>[array_num - <span class="number">1</span> - i] = <span class="type">array</span>[index];</span><br><span class="line">        <span class="type">array</span>[index] = tmp;</span><br><span class="line">        <span class="literal">result</span>[i] = tmp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -190,7 +132,7 @@ int* random_extract(int array[">
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/09/16/kaggle digit recognizer之PCA+KNN解法/" title="kaggle digit recognizer之PCA+KNN解法">
+ <a href="/2015/09/16/kaggle-digit-recognizer之PCA+KNN解法/" title="kaggle digit recognizer之PCA+KNN解法">
   <strong>上一篇：</strong><br/>
   <span>
   kaggle digit recognizer之PCA+KNN解法</span>
@@ -245,6 +187,10 @@ int* random_extract(int array[">
 		
 			
 				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/hive/" title="hive">hive<sup>1</sup></a></li>
 			
 		
 		</ul>
