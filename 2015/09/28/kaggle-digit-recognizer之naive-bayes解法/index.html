@@ -4,31 +4,22 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>kaggle digit recognizer之logistic regression解法 | 今夕何夕</title>
+    <title>kaggle digit recognizer之naive bayes解法 | 今夕何夕</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wendale">
     
 
     
-    <meta name="description" content="logistic regression
-逻辑回归是一种常用的分类算法（虽然名称带着回归，其实是分类），在广告行业中运用非常广泛，主要用来判断用户是否点击某个广告，以此实现广告的最佳投放效果。逻辑回归一般用来解决二分类的问题，即某件事情只有两种可能，通过训练数据得到预测数据发生某种情况的可能性，一般如果大于0.5我们认为该事件会发生，小于0.5则该事件的互斥事件会发生。
-
-本题思路由于数字有10种可">
+    <meta name="description" content="naive bayesnaive bayes(朴素贝叶斯)是一种常见的分类算法，原理就是概率论一开始讲的贝叶斯原理。之所以naive，是因为它有个很关键的假设：各个特征之间是无关联的。这是一种理想化的假设，所以如果特征之间关联比较密切，就不适合了。朴素贝叶斯在文本分类应用广泛，如分词，垃圾邮件识别等。至于做手写图片识别，其实是不太合适的，因为图片的像素之间关联还是挺大的，但是作为初步学习该方法，还">
 <meta property="og:type" content="article">
-<meta property="og:title" content="kaggle digit recognizer之logistic regression解法">
-<meta property="og:url" content="http://wendale.cn/2015/09/23/kaggle-digit-recognizer之logistic-regression解法/index.html">
+<meta property="og:title" content="kaggle digit recognizer之naive bayes解法">
+<meta property="og:url" content="http://wendale.cn/2015/09/28/kaggle-digit-recognizer之naive-bayes解法/index.html">
 <meta property="og:site_name" content="今夕何夕">
-<meta property="og:description" content="logistic regression
-逻辑回归是一种常用的分类算法（虽然名称带着回归，其实是分类），在广告行业中运用非常广泛，主要用来判断用户是否点击某个广告，以此实现广告的最佳投放效果。逻辑回归一般用来解决二分类的问题，即某件事情只有两种可能，通过训练数据得到预测数据发生某种情况的可能性，一般如果大于0.5我们认为该事件会发生，小于0.5则该事件的互斥事件会发生。
-
-本题思路由于数字有10种可">
+<meta property="og:description" content="naive bayesnaive bayes(朴素贝叶斯)是一种常见的分类算法，原理就是概率论一开始讲的贝叶斯原理。之所以naive，是因为它有个很关键的假设：各个特征之间是无关联的。这是一种理想化的假设，所以如果特征之间关联比较密切，就不适合了。朴素贝叶斯在文本分类应用广泛，如分词，垃圾邮件识别等。至于做手写图片识别，其实是不太合适的，因为图片的像素之间关联还是挺大的，但是作为初步学习该方法，还">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="kaggle digit recognizer之logistic regression解法">
-<meta name="twitter:description" content="logistic regression
-逻辑回归是一种常用的分类算法（虽然名称带着回归，其实是分类），在广告行业中运用非常广泛，主要用来判断用户是否点击某个广告，以此实现广告的最佳投放效果。逻辑回归一般用来解决二分类的问题，即某件事情只有两种可能，通过训练数据得到预测数据发生某种情况的可能性，一般如果大于0.5我们认为该事件会发生，小于0.5则该事件的互斥事件会发生。
-
-本题思路由于数字有10种可">
+<meta name="twitter:title" content="kaggle digit recognizer之naive bayes解法">
+<meta name="twitter:description" content="naive bayesnaive bayes(朴素贝叶斯)是一种常见的分类算法，原理就是概率论一开始讲的贝叶斯原理。之所以naive，是因为它有个很关键的假设：各个特征之间是无关联的。这是一种理想化的假设，所以如果特征之间关联比较密切，就不适合了。朴素贝叶斯在文本分类应用广泛，如分词，垃圾邮件识别等。至于做手写图片识别，其实是不太合适的，因为图片的像素之间关联还是挺大的，但是作为初步学习该方法，还">
 
     
     <link rel="alternative" href="/atom.xml" title="今夕何夕" type="application/atom+xml">
@@ -88,35 +79,26 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/09/23/kaggle-digit-recognizer之logistic-regression解法/" title="kaggle digit recognizer之logistic regression解法" itemprop="url">kaggle digit recognizer之logistic regression解法</a>
+      <a href="/2015/09/28/kaggle-digit-recognizer之naive-bayes解法/" title="kaggle digit recognizer之naive bayes解法" itemprop="url">kaggle digit recognizer之naive bayes解法</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
 		
   <p class="article-time">
-    <time datetime="2015-09-23T10:16:02.000Z" itemprop="datePublished"> 发表于 2015-09-23</time>
+    <time datetime="2015-09-28T09:58:36.000Z" itemprop="datePublished"> 发表于 2015-09-28</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		<h2 id="logistic_regression">logistic regression</h2><blockquote>
-<p><strong>逻辑回归</strong>是一种常用的分类算法（虽然名称带着回归，其实是分类），在广告行业中运用非常广泛，主要用来判断用户是否点击某个广告，以此实现广告的最佳投放效果。逻辑回归一般用来解决二分类的问题，即某件事情只有两种可能，通过训练数据得到预测数据发生某种情况的可能性，一般如果大于0.5我们认为该事件会发生，小于0.5则该事件的互斥事件会发生。</p>
-</blockquote>
-<h2 id="本题思路">本题思路</h2><p>由于数字有10种可能，所以这是一种多分类的场景。逻辑回归在这种场景下的一般做法是：如果有n种分类，则做n次逻辑回归，每次把是该种类的视为一类，把非该种类的视为另一类，这样可以计算出n个可能性，取可能性最大的作为分类。针对本题我也是这么做的，但是效果非常不理想，正确率仅为0.80（tnn的还运行了好几个小时）。但是作为通过这次练习，大致熟悉了逻辑回归。</p>
-<h2 id="代码">代码</h2><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">train &lt;- <span class="keyword">read</span>.csv(<span class="string">"data/train.csv"</span>, header=TRUE)</span><br><span class="line"><span class="keyword">test</span> &lt;- <span class="keyword">read</span>.csv(<span class="string">"data/test.csv"</span>, header=TRUE)</span><br><span class="line"></span><br><span class="line">labels &lt;- train[,1]</span><br><span class="line">train &lt;- train[,-1]</span><br><span class="line"></span><br><span class="line">#create formula</span><br><span class="line">xnam &lt;- paste0(<span class="string">"pixel"</span>, c(0:783))</span><br><span class="line">formula &lt;- <span class="keyword">as</span>.formula(paste(<span class="string">"lr.labels ~ "</span>, paste(xnam, <span class="keyword">collapse</span> = <span class="string">"+"</span>)))</span><br><span class="line"></span><br><span class="line">pre &lt;- <span class="keyword">list</span>()</span><br><span class="line"><span class="keyword">for</span> (i <span class="keyword">in</span> 0 : 9) &#123;</span><br><span class="line">    lr.labels &lt;- ifelse(labels == i, 1, 0)</span><br><span class="line">    logic.<span class="keyword">fit</span> &lt;- <span class="keyword">glm</span>(formula = formula, data = cbind(lr.labels, train), family=<span class="literal">binomial</span>(link=<span class="string">"logit"</span>))</span><br><span class="line">    p &lt;- <span class="keyword">predict</span>(logic.<span class="keyword">fit</span>, <span class="keyword">test</span>)</span><br><span class="line">    pre &lt;- cbind(pre, <span class="literal">exp</span>(p) / 1 + <span class="literal">exp</span>(p))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">result &lt;- max.col(pre) - 1</span><br></pre></td></tr></table></figure>
-<h2 id="说明">说明</h2><p>glm是R广义线性模型函数，可以处理很多种回归，通过family参数控制回归类型，主要有：</p>
-<ol>
-<li>binomal(link=’logit’)         ——响应变量服从二项分布，连接函数为logit，即logistic回归</li>
-<li>binomal(link=’probit’)       ——响应变量服从二项分布，连接函数为probit</li>
-<li>poisson(link=’identity’)     ——响应变量服从泊松分布，即泊松回归</li>
-</ol>
-<p>还有是对R的formula不熟悉，最后参考<a href="&quot;http://site.douban.com/182577/widget/notes/10567181/note/318916395/&quot;">这里</a>算是理解了吧。</p>
+		<h2 id="naive_bayes">naive bayes</h2><p>naive bayes(朴素贝叶斯)是一种常见的分类算法，原理就是概率论一开始讲的贝叶斯原理。之所以naive，是因为它有个很关键的假设：各个特征之间是无关联的。这是一种理想化的假设，所以如果特征之间关联比较密切，就不适合了。朴素贝叶斯在文本分类应用广泛，如分词，垃圾邮件识别等。至于做手写图片识别，其实是不太合适的，因为图片的像素之间关联还是挺大的，但是作为初步学习该方法，还是尝试了下，结果确实不怎么样，不到0.6的正确率，网上看有用朴素贝叶斯达到0.8的，应该是在哪方面做优化了。关于朴素贝叶斯方法的详细介绍，可以看下面参考1的链接，讲的很详细直观。</p>
+<h2 id="实现">实现</h2><p>R的e1071包有naiveBayes方法，但是使用该方法要注意，label一定得是factor类型的，函数文档也说了，只能做离散值的预测，如果是数字它会认为是连续的。所以可以看到代码中对label做了类型转换。关于该函数的参考文档，可以参考2的链接。</p>
+<h2 id="代码">代码</h2><figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">train &lt;- read.csv(<span class="string">"data/train.csv"</span>, header=<span class="type">TRUE</span>)</span><br><span class="line">test &lt;- read.csv(<span class="string">"data/test.csv"</span>, header=<span class="type">TRUE</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#注意要对label做类型转换，使用拉普拉斯平滑处理</span></span><br><span class="line">classifier &lt;- naiveBayes(<span class="keyword">as</span>.factor(label) ~ ., train, laplace = <span class="number">10</span>)</span><br><span class="line"><span class="literal">result</span> &lt;- predict(classifier, test)</span><br><span class="line"></span><br><span class="line"><span class="comment">#这个地方很奇怪，写入文件时result都+1了，所以提前-1，还没找到是什么原因</span></span><br><span class="line"><span class="literal">result</span>.table &lt;- data.frame(<span class="type">ImageId</span>=<span class="number">1</span>:nrow(test), <span class="type">Label</span>=<span class="keyword">as</span>.numeric(<span class="literal">result</span>) - <span class="number">1</span>)</span><br><span class="line">write.csv(<span class="literal">result</span>.table, <span class="string">"result/naive_bayes.csv"</span>, row.names = F)</span><br></pre></td></tr></table></figure>
+<h2 id="心得">心得</h2><p>朴素贝叶斯算法算是比较简单了，其实之前用的pca、knn、logistic regression、以及线性回归都是非常直观的算法，可能公式推导有的比较复杂。最近也算是了解了它们，然后使用已有的库做练习。后续再熟悉下svm、神经网络，然后就用R或者其他语言实现一遍，还有它们的mapreduce版本也尝试实现下，然后就是能自己用尽可能简单的语言将这些算法尽可能清晰地描述出来。这么一看，任务还是挺多滴。加油！</p>
 <h2 id="参考">参考</h2><ol>
-<li><a href="&quot;http://blog.csdn.net/pakko/article/details/37878837&quot;">逻辑回归</a></li>
-<li><a href="&quot;http://www.cnblogs.com/runner-ljt/p/4574275.html&quot;">R广义线性模型</a></li>
-<li><a href="&quot;http://site.douban.com/182577/widget/notes/10567181/note/318916395/&quot;">R中的formula与Formula</a></li>
+<li><a href="&quot;http://www.cnblogs.com/leoo2sk/archive/2010/09/17/naive-bayesian-classifier.html&quot;">朴素贝叶斯</a></li>
+<li><a href="&quot;http://www.inside-r.org/packages/cran/e1071/docs/naiveBayes&quot;">R naiveBayes</a></li>
 </ol>
   
 	</div>
@@ -135,7 +117,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://wendale.cn/2015/09/23/kaggle-digit-recognizer之logistic-regression解法/" data-title="kaggle digit recognizer之logistic regression解法 | 今夕何夕" data-tsina="3283060652" class="share clearfix">
+	  <div data-url="http://wendale.cn/2015/09/28/kaggle-digit-recognizer之naive-bayes解法/" data-title="kaggle digit recognizer之naive bayes解法 | 今夕何夕" data-tsina="3283060652" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -148,19 +130,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/09/24/hive-udf使用/" title="hive udf使用">
-  <strong>上一篇：</strong><br/>
-  <span>
-  hive udf使用</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/09/16/kaggle-digit-recognizer之PCA+KNN解法/"  title="kaggle digit recognizer之PCA+KNN解法">
+<a href="/2015/09/24/hive-udf使用/"  title="hive udf使用">
  <strong>下一篇：</strong><br/> 
- <span>kaggle digit recognizer之PCA+KNN解法
+ <span>hive udf使用
 </span>
 </a>
 </div>
@@ -169,7 +143,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/09/23/kaggle-digit-recognizer之logistic-regression解法/" data-title="kaggle digit recognizer之logistic regression解法" data-url="http://wendale.cn/2015/09/23/kaggle-digit-recognizer之logistic-regression解法/"></div>
+	<div class="ds-thread" data-thread-key="2015/09/28/kaggle-digit-recognizer之naive-bayes解法/" data-title="kaggle digit recognizer之naive bayes解法" data-url="http://wendale.cn/2015/09/28/kaggle-digit-recognizer之naive-bayes解法/"></div>
 </section>
 
 
@@ -179,7 +153,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#logistic_regression"><span class="toc-number">1.</span> <span class="toc-text">logistic regression</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本题思路"><span class="toc-number">2.</span> <span class="toc-text">本题思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码"><span class="toc-number">3.</span> <span class="toc-text">代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#说明"><span class="toc-number">4.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#naive_bayes"><span class="toc-number">1.</span> <span class="toc-text">naive bayes</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现"><span class="toc-number">2.</span> <span class="toc-text">实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码"><span class="toc-number">3.</span> <span class="toc-text">代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#心得"><span class="toc-number">4.</span> <span class="toc-text">心得</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
  
   </div>
 

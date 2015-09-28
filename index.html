@@ -81,6 +81,71 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/09/28/kaggle-digit-recognizer之naive-bayes解法/" title="kaggle digit recognizer之naive bayes解法" itemprop="url">kaggle digit recognizer之naive bayes解法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
+		
+  <p class="article-time">
+    <time datetime="2015-09-28T09:58:36.000Z" itemprop="datePublished"> 发表于 2015-09-28</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="naive_bayes">naive bayes</h2><p>naive bayes(朴素贝叶斯)是一种常见的分类算法，原理就是概率论一开始讲的贝叶斯原理。之所以naive，是因为它有个很关键的假设：各个特征之间是无关联的。这是一种理想化的假设，所以如果特征之间关联比较密切，就不适合了。朴素贝叶斯在文本分类应用广泛，如分词，垃圾邮件识别等。至于做手写图片识别，其实是不太合适的，因为图片的像素之间关联还是挺大的，但是作为初步学习该方法，还是尝试了下，结果确实不怎么样，不到0.6的正确率，网上看有用朴素贝叶斯达到0.8的，应该是在哪方面做优化了。关于朴素贝叶斯方法的详细介绍，可以看下面参考1的链接，讲的很详细直观。</p>
+<h2 id="实现">实现</h2><p>R的e1071包有naiveBayes方法，但是使用该方法要注意，label一定得是factor类型的，函数文档也说了，只能做离散值的预测，如果是数字它会认为是连续的。所以可以看到代码中对label做了类型转换。关于该函数的参考文档，可以参考2的链接。</p>
+<h2 id="代码">代码</h2><figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">train &lt;- read.csv(<span class="string">"data/train.csv"</span>, header=<span class="type">TRUE</span>)</span><br><span class="line">test &lt;- read.csv(<span class="string">"data/test.csv"</span>, header=<span class="type">TRUE</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#注意要对label做类型转换，使用拉普拉斯平滑处理</span></span><br><span class="line">classifier &lt;- naiveBayes(<span class="keyword">as</span>.factor(label) ~ ., train, laplace = <span class="number">10</span>)</span><br><span class="line"><span class="literal">result</span> &lt;- predict(classifier, test)</span><br><span class="line"></span><br><span class="line"><span class="comment">#这个地方很奇怪，写入文件时result都+1了，所以提前-1，还没找到是什么原因</span></span><br><span class="line"><span class="literal">result</span>.table &lt;- data.frame(<span class="type">ImageId</span>=<span class="number">1</span>:nrow(test), <span class="type">Label</span>=<span class="keyword">as</span>.numeric(<span class="literal">result</span>) - <span class="number">1</span>)</span><br><span class="line">write.csv(<span class="literal">result</span>.table, <span class="string">"result/naive_bayes.csv"</span>, row.names = F)</span><br></pre></td></tr></table></figure>
+<h2 id="心得">心得</h2><p>朴素贝叶斯算法算是比较简单了，其实之前用的pca、knn、logistic regression、以及线性回归都是非常直观的算法，可能公式推导有的比较复杂。最近也算是了解了它们，然后使用已有的库做练习。后续再熟悉下svm、神经网络，然后就用R或者其他语言实现一遍，还有它们的mapreduce版本也尝试实现下，然后就是能自己用尽可能简单的语言将这些算法尽可能清晰地描述出来。这么一看，任务还是挺多滴。加油！</p>
+<h2 id="参考">参考</h2><ol>
+<li><a href="&quot;http://www.cnblogs.com/leoo2sk/archive/2010/09/17/naive-bayesian-classifier.html&quot;">朴素贝叶斯</a></li>
+<li><a href="&quot;http://www.inside-r.org/packages/cran/e1071/docs/naiveBayes&quot;">R naiveBayes</a></li>
+</ol>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/kaggle/">kaggle</a><a href="/tags/机器学习/">机器学习</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/09/28/kaggle-digit-recognizer之naive-bayes解法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/09/28/kaggle-digit-recognizer之naive-bayes解法/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/09/24/hive-udf使用/" title="hive udf使用" itemprop="url">hive udf使用</a>
   </h1>
   <p class="article-author">By
@@ -434,15 +499,15 @@ ImageId,Label
 		<ul class="clearfix">
 		
 			
+				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>3</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/笔试题/" title="笔试题">笔试题<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>2</sup></a></li>
 			
 		
 			
