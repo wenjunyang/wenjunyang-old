@@ -1,0 +1,457 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>k近邻法-统计学习方法笔记（二） | 今夕何夕</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wendale">
+    
+
+    
+    <meta name="description" content="算法介绍k近邻法（KNN）是一种常用的机器学习方法，可用于分类，也可用于回归。对于分类，简单来讲就是对于待分类点找出与之最邻近的k个，根据这k个的类比以一定规则决定这个点的类别，一般用的是选举的策略。回归的话基本一致，只是最后取值规则修改下，可以采用平均值或者加权平均值。通过上面的简介，可以看出来k近邻法有以下三个基本要素：
+
+k值的选择。当k较大时，可以假设当k为样本容量N时，就是求均值，模型过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k近邻法-统计学习方法笔记（二）">
+<meta property="og:url" content="http://wendale.cn/2015/11/05/k近邻法-统计学习方法笔记（二）/index.html">
+<meta property="og:site_name" content="今夕何夕">
+<meta property="og:description" content="算法介绍k近邻法（KNN）是一种常用的机器学习方法，可用于分类，也可用于回归。对于分类，简单来讲就是对于待分类点找出与之最邻近的k个，根据这k个的类比以一定规则决定这个点的类别，一般用的是选举的策略。回归的话基本一致，只是最后取值规则修改下，可以采用平均值或者加权平均值。通过上面的简介，可以看出来k近邻法有以下三个基本要素：
+
+k值的选择。当k较大时，可以假设当k为样本容量N时，就是求均值，模型过">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="k近邻法-统计学习方法笔记（二）">
+<meta name="twitter:description" content="算法介绍k近邻法（KNN）是一种常用的机器学习方法，可用于分类，也可用于回归。对于分类，简单来讲就是对于待分类点找出与之最邻近的k个，根据这k个的类比以一定规则决定这个点的类别，一般用的是选举的策略。回归的话基本一致，只是最后取值规则修改下，可以采用平均值或者加权平均值。通过上面的简介，可以看出来k近邻法有以下三个基本要素：
+
+k值的选择。当k较大时，可以假设当k为样本容量N时，就是求均值，模型过">
+
+    
+    <link rel="alternative" href="/atom.xml" title="今夕何夕" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="今夕何夕" title="今夕何夕"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="今夕何夕">今夕何夕</a></h1>
+				<h2 class="blog-motto">love it, love life</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:wendale.cn">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/05/k近邻法-统计学习方法笔记（二）/" title="k近邻法-统计学习方法笔记（二）" itemprop="url">k近邻法-统计学习方法笔记（二）</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-05T10:34:36.000Z" itemprop="datePublished"> 发表于 2015-11-05</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h2 id="算法介绍">算法介绍</h2><p>k近邻法（KNN）是一种常用的机器学习方法，可用于分类，也可用于回归。对于分类，简单来讲就是对于待分类点找出与之最邻近的k个，根据这k个的类比以一定规则决定这个点的类别，一般用的是选举的策略。回归的话基本一致，只是最后取值规则修改下，可以采用平均值或者加权平均值。<br>通过上面的简介，可以看出来k近邻法有以下三个基本要素：</p>
+<ol>
+<li>k值的选择。当k较大时，可以假设当k为样本容量N时，就是求均值，模型过于简单了。如果k太小，极端情况下k取1，那么很容易被噪声干扰，本质上是k太小，导致模型过于复杂，出现了过拟合。</li>
+<li>距离的度量。常用的欧式距离，还有曼哈顿距离，更为普遍的是Minkowski距离。</li>
+<li>分类决策规则。分类一般是少数服从多数，回归的话取均值或者按距离加权均值，距离越近权值越大。</li>
+</ol>
+<h2 id="kd树">kd树</h2><p>对于给定样本点，当要查找预测点的k近邻时，可以直接遍历样本，选出最近的k个即可。但是这样每次都要遍历样本，当样本规模较大时，效率太低了。于是提出了KD树（k dimension tree）算法，kd数可以看作是多维度下的二叉排序树。对于一维的情况，就是平时所见的二叉排序树。当多维时，每次选取其中一维进行分割。至于选那一维，可以选方差最大的维度，方差越大说明数据分布越散，越容易分割。kd树生成算法描述如下：<br><strong>算法：构建k-d树（createKDTree）</strong><br><strong>输入：数据点集Data-set和其所在的空间Range</strong><br><strong>输出：Kd，类型为k-d tree</strong></p>
+<ol>
+<li>If Data-set为空，则返回空的k-d tree</li>
+<li>调用节点生成程序：<br>　　（1）确定split域：对于所有描述子数据（特征矢量），统计它们在每个维上的数据方差。以SURF特征为例，描述子为64维，可计算64个方差。挑选出最大值，对应的维就是split域的值。数据方差大表明沿该坐标轴方向上的数据分散得比较开，在这个方向上进行数据分割有较好的分辨率；<br>　　（2）确定Node-data域：数据点集Data-set按其第split域的值排序。位于正中间的那个数据点被选为Node-data。此时新的Data-set’ = Data-set\Node-data（除去其中Node-data这一点）。|</li>
+<li>dataleft = {d属于Data-set’ &amp;&amp; d[split] ≤ Node-data[split]}<br>Left_Range = {Range &amp;&amp; dataleft}<br>dataright = {d属于Data-set’ &amp;&amp; d[split] &gt; Node-data[split]}<br>Right_Range = {Range &amp;&amp; dataright}|</li>
+<li>left = 由（dataleft，Left<em>Range）建立的k-d tree，即递归调用createKDTree（dataleft，Left</em><br>Range）。并设置left的parent域为Kd；<br>right = 由（dataright，Right<em>Range）建立的k-d tree，即调用createKDTree（dataleft，Left</em><br>Range）。并设置right的parent域为Kd。</li>
+</ol>
+<h3 id="kd树结构">kd树结构</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, point, split)</span>:</span></span><br><span class="line">        self.left = <span class="keyword">None</span>               <span class="comment">#左子树</span></span><br><span class="line">        self.right = <span class="keyword">None</span>              <span class="comment">#右子树</span></span><br><span class="line">        self.point = point             <span class="comment">#分割点</span></span><br><span class="line">        self.split = split             <span class="comment">#分割维度</span></span><br></pre></td></tr></table></figure>
+<h3 id="kd树构造">kd树构造</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#中位数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">median</span><span class="params">(lst)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(lst) % <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">return</span> np.median(lst)</span><br><span class="line">    <span class="keyword">return</span> np.median(lst[<span class="number">1</span>:])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#欧氏距离</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">os_distance</span><span class="params">(v1, v2)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> np.linalg.norm(np.array(v1) - np.array(v2))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_kdtree</span><span class="params">(points, d)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(points) == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">None</span></span><br><span class="line"></span><br><span class="line">    mid = median(np.array(points[:, d]))</span><br><span class="line">    left_points = np.array([m <span class="keyword">for</span> m <span class="keyword">in</span> points <span class="keyword">if</span> m[d] &lt; mid])</span><br><span class="line">    right_points = np.array([m <span class="keyword">for</span> m <span class="keyword">in</span> points <span class="keyword">if</span> m[d] &gt; mid])</span><br><span class="line">    points = np.array([m <span class="keyword">for</span> m <span class="keyword">in</span> points <span class="keyword">if</span> m[d] == mid])</span><br><span class="line"></span><br><span class="line">    n = Node(points[<span class="number">0</span>], d)</span><br><span class="line">    n.left = build_kdtree(np.concatenate((left_points.reshape((len(left_points), len(points[<span class="number">0</span>]))), points[<span class="number">1</span>:])),</span><br><span class="line">                          (d+<span class="number">1</span>) % len(points[<span class="number">0</span>]))</span><br><span class="line">    n.right = build_kdtree(right_points, (d+<span class="number">1</span>) % len(points[<span class="number">0</span>]))</span><br><span class="line">    <span class="keyword">return</span> n</span><br></pre></td></tr></table></figure>
+<h3 id="kd树查找（最近邻）">kd树查找（最近邻）</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">def <span class="function"><span class="title">search_nearest</span><span class="params">(kd_tree, target)</span></span>:</span><br><span class="line">    <span class="keyword">if</span> not kd_tree:</span><br><span class="line">        return None</span><br><span class="line">    search_path = []</span><br><span class="line">    nearest = kd_tree<span class="class">.point</span></span><br><span class="line"></span><br><span class="line">    #构造查找路劲</span><br><span class="line">    while kd_tree:</span><br><span class="line">        search_path.<span class="function"><span class="title">append</span><span class="params">(kd_tree)</span></span></span><br><span class="line">        <span class="keyword">if</span> <span class="function"><span class="title">os_distance</span><span class="params">(target, nearest)</span></span> &gt; <span class="function"><span class="title">os_distance</span><span class="params">(target, kd_tree.point)</span></span>:</span><br><span class="line">            nearest = kd_tree<span class="class">.point</span></span><br><span class="line">        <span class="keyword">if</span> target[kd_tree.split] &lt; kd_tree<span class="class">.point</span>[kd_tree.split]:</span><br><span class="line">            kd_tree = kd_tree<span class="class">.left</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            kd_tree = kd_tree<span class="class">.right</span></span><br><span class="line">    #回溯查找</span><br><span class="line">    while search_path:</span><br><span class="line">        tree = search_path.<span class="function"><span class="title">pop</span><span class="params">()</span></span></span><br><span class="line">        <span class="keyword">if</span> <span class="function"><span class="title">abs</span><span class="params">(target[tree.split] - tree.point[tree.split])</span></span> &lt; <span class="function"><span class="title">os_distance</span><span class="params">(target, nearest)</span></span>:</span><br><span class="line">            <span class="keyword">if</span> target[tree.split] &lt; tree<span class="class">.point</span>[tree.split]:</span><br><span class="line">                to_add = tree<span class="class">.right</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                to_add = tree<span class="class">.left</span></span><br><span class="line">        <span class="keyword">if</span> to_add:</span><br><span class="line">            search_path.<span class="function"><span class="title">append</span><span class="params">(to_add)</span></span></span><br><span class="line">        <span class="keyword">if</span> <span class="function"><span class="title">os_distance</span><span class="params">(target, nearest)</span></span> &gt; <span class="function"><span class="title">os_distance</span><span class="params">(target, tree.point)</span></span>:</span><br><span class="line">            nearest = tree<span class="class">.point</span></span><br><span class="line">    return nearest</span><br></pre></td></tr></table></figure>
+<h2 id="总结">总结</h2><p>k近邻法要掌握它的三要素，算法部分是kd树，kd树设计到很多知识，包括kd树的增删改查，kd树的改进。k近邻法在分类领域是一个基本的常用算法，上次做kaggle的手写字体识别，knn准确率最高，达到了0.97左右。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/机器学习/">机器学习</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://wendale.cn/2015/11/05/k近邻法-统计学习方法笔记（二）/" data-title="k近邻法-统计学习方法笔记（二） | 今夕何夕" data-tsina="3283060652" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/10/30/几道笔试题/"  title="几道笔试题">
+ <strong>下一篇：</strong><br/> 
+ <span>几道笔试题
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/11/05/k近邻法-统计学习方法笔记（二）/" data-title="k近邻法-统计学习方法笔记（二）" data-url="http://wendale.cn/2015/11/05/k近邻法-统计学习方法笔记（二）/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#算法介绍"><span class="toc-number">1.</span> <span class="toc-text">算法介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kd树"><span class="toc-number">2.</span> <span class="toc-text">kd树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#kd树结构"><span class="toc-number">2.1.</span> <span class="toc-text">kd树结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kd树构造"><span class="toc-number">2.2.</span> <span class="toc-text">kd树构造</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kd树查找（最近邻）"><span class="toc-number">2.3.</span> <span class="toc-text">kd树查找（最近邻）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/笔试题/" title="笔试题">笔试题<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/hive/" title="hive">hive<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3283060652&verifier=bb6a83de&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m wendale. <br/>
+			This is my blog,wishing you would like it.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/wendale_8375## e.g. wuchong1014 or 2176287895 for http://weibo.com/2176287895" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="wendale">wendale</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"wendale"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F96f43d712694a08946a01389510d03bb' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+
+  </body>
+</html>
