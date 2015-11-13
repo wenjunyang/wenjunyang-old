@@ -81,6 +81,75 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/11/11/利用netcat快速搭建http服务/" title="利用netcat快速搭建http服务" itemprop="url">利用netcat快速搭建http服务</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-11T08:18:13.000Z" itemprop="datePublished"> 发表于 2015-11-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="netcat">netcat</h2><p>netcat是linux系统自带的一个网络工具，通过，netcat的应用非常多，比如做代理，端口扫描，聊天服务器等，被誉为linux网络工具中的瑞士军刀，关于各种应用场景的介绍，可以参考下面参考1的链接。本文要分享的是netcat在工作中的一次应用：提供http服务。</p>
+<h2 id="需求场景">需求场景</h2><p>场景是这样的，我在和其他部门联调测试，本质上就是对方把数据推过来了，我手动触发处理，然后再把结果推过去。每次联调都要沟通，相当麻烦，觉得应该想办法提高效率。其实联调中我的作用就下面三点：</p>
+<ol>
+<li>清空历史数据</li>
+<li>查看数据是否接受到</li>
+<li>调用数据处理程序，并把处理结果同步过去。</li>
+</ol>
+<p>其实完全可以让对方登陆到我的测试机器，但是总觉得这样不妥，万一我那高雅的代码被人看到了呢～～。所以我希望别人能够在我的机器执行以上三个操作，在不登陆我的机器前提下。想起之前用nc做过代理服务，就试了下提供个http服务：</p>
+<h2 id="处理逻辑">处理逻辑</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#step 1 读取请求信息</span></span><br><span class="line"><span class="built_in">read</span> request</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> /bin/<span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">  <span class="built_in">read</span> header</span><br><span class="line">  [ <span class="string">"<span class="variable">$header</span>"</span> == $<span class="string">'\r'</span> ] &amp;&amp; <span class="built_in">break</span>;</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#step 2 提取url</span></span><br><span class="line">url=<span class="string">"<span class="variable">$&#123;request#GET &#125;</span>"</span></span><br><span class="line">url=<span class="string">"<span class="variable">$&#123;url% HTTP/*&#125;</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#step 3 解析命令，返回结果</span></span><br><span class="line"><span class="built_in">echo</span> <span class="operator">-e</span> <span class="string">"HTTP/1.1 200 OK\r"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="operator">-e</span> <span class="string">"Content-Type: text/plain; charset=utf-8\r"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="operator">-e</span> <span class="string">"\r"</span></span><br><span class="line"><span class="keyword">case</span> <span class="variable">$url</span> <span class="keyword">in</span></span><br><span class="line"><span class="comment">#接口1：清空数据</span></span><br><span class="line">    <span class="string">'/clear'</span>)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">'开始清除历史数据...'</span></span><br><span class="line">        rm ./out/*.txt</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">'数据已清除!OK'</span></span><br><span class="line">        ;;</span><br><span class="line"><span class="comment">#接口3：调用数据处理程序，并把处理结果同步过去</span></span><br><span class="line">    <span class="string">'/exec'</span>)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">'执行排名统计并同步数据..'</span></span><br><span class="line">        ./batch.sh</span><br><span class="line">        <span class="keyword">if</span> [[ $? <span class="operator">-eq</span> <span class="number">0</span> ]];<span class="keyword">then</span></span><br><span class="line">            <span class="built_in">echo</span> <span class="string">'执行成功！OK'</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="built_in">echo</span> <span class="string">'执行失败！error'</span></span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">        ;;</span><br><span class="line"><span class="comment">#接口2：查看数据</span></span><br><span class="line">    <span class="string">'/watch'</span>)</span><br><span class="line">        i=<span class="number">0</span></span><br><span class="line">        <span class="keyword">while</span> <span class="built_in">read</span> line</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">            <span class="keyword">if</span> [[ <span class="variable">$line</span> == <span class="number">4</span>* ]]; <span class="keyword">then</span></span><br><span class="line">                i=$((<span class="variable">$i</span>+<span class="number">1</span>))</span><br><span class="line">                <span class="built_in">echo</span> <span class="variable">$line</span></span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">        <span class="keyword">done</span> &lt; ./out/json_result.txt</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">"共<span class="variable">$i</span>行"</span></span><br><span class="line">        ;;</span><br><span class="line">         *)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">'非法操作'</span></span><br><span class="line">        ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+<h2 id="服务驱动">服务驱动</h2><p>nc监听端口，将接受到的数据丢给处理逻辑，处理逻辑处理完再交给nc，此处用双向管道实现循环管道<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">DPIPE=<span class="string">"/tmp/static_server"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"删除双向管道<span class="variable">$&#123;DPIPE&#125;</span>（如果存在的话）..."</span></span><br><span class="line">rm <span class="operator">-f</span> <span class="variable">$DPIPE</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"创建双向管道【<span class="variable">$&#123;DPIPE&#125;</span>】..."</span></span><br><span class="line">mkfifo <span class="variable">$DPIPE</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"服务开始..."</span></span><br><span class="line"><span class="keyword">while</span> /bin/<span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    cat <span class="variable">$DPIPE</span> | ./static_server.sh | nc <span class="operator">-l</span> <span class="number">127.0</span>.<span class="number">0.1</span> <span class="number">8080</span> &gt; <span class="variable">$DPIPE</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure></p>
+<p>非常的轻量级，开发这个接口加测试不到一个小时，python3的http.server也能很快实现这样的功能，有机会也试下。</p>
+<p><a href="http://www.oschina.net/translate/linux-netcat-command" target="_blank" rel="external">netcat应用场景介绍</a></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/linux/">linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/11/11/利用netcat快速搭建http服务/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/11/利用netcat快速搭建http服务/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/11/05/k近邻法-统计学习方法笔记（二）/" title="k近邻法-统计学习方法笔记（二）" itemprop="url">k近邻法-统计学习方法笔记（二）</a>
   </h1>
   <p class="article-author">By
@@ -311,8 +380,8 @@
 <h2 id="代码">代码</h2><figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">train &lt;- read.csv(<span class="string">"data/train.csv"</span>, header=<span class="type">TRUE</span>)</span><br><span class="line">test &lt;- read.csv(<span class="string">"data/test.csv"</span>, header=<span class="type">TRUE</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#注意要对label做类型转换，使用拉普拉斯平滑处理</span></span><br><span class="line">classifier &lt;- naiveBayes(<span class="keyword">as</span>.factor(label) ~ ., train, laplace = <span class="number">10</span>)</span><br><span class="line"><span class="literal">result</span> &lt;- predict(classifier, test)</span><br><span class="line"></span><br><span class="line"><span class="comment">#这个地方很奇怪，写入文件时result都+1了，所以提前-1，还没找到是什么原因</span></span><br><span class="line"><span class="literal">result</span>.table &lt;- data.frame(<span class="type">ImageId</span>=<span class="number">1</span>:nrow(test), <span class="type">Label</span>=<span class="keyword">as</span>.numeric(<span class="literal">result</span>) - <span class="number">1</span>)</span><br><span class="line">write.csv(<span class="literal">result</span>.table, <span class="string">"result/naive_bayes.csv"</span>, row.names = F)</span><br></pre></td></tr></table></figure>
 <h2 id="心得">心得</h2><p>朴素贝叶斯算法算是比较简单了，其实之前用的pca、knn、logistic regression、以及线性回归都是非常直观的算法，可能公式推导有的比较复杂。最近也算是了解了它们，然后使用已有的库做练习。后续再熟悉下svm、神经网络，然后就用R或者其他语言实现一遍，还有它们的mapreduce版本也尝试实现下，然后就是能自己用尽可能简单的语言将这些算法尽可能清晰地描述出来。这么一看，任务还是挺多滴。加油！</p>
 <h2 id="参考">参考</h2><ol>
-<li><a href="&quot;http://www.cnblogs.com/leoo2sk/archive/2010/09/17/naive-bayesian-classifier.html&quot;">朴素贝叶斯</a></li>
-<li><a href="&quot;http://www.inside-r.org/packages/cran/e1071/docs/naiveBayes&quot;">R naiveBayes</a></li>
+<li><a href="http://www.cnblogs.com/leoo2sk/archive/2010/09/17/naive-bayesian-classifier.html" target="_blank" rel="external">朴素贝叶斯</a></li>
+<li><a href="http://www.inside-r.org/packages/cran/e1071/docs/naiveBayes" target="_blank" rel="external">R naiveBayes</a></li>
 </ol>
 
         
@@ -460,11 +529,11 @@
 <li>binomal(link=’probit’)       ——响应变量服从二项分布，连接函数为probit</li>
 <li>poisson(link=’identity’)     ——响应变量服从泊松分布，即泊松回归</li>
 </ol>
-<p>还有是对R的formula不熟悉，最后参考<a href="&quot;http://site.douban.com/182577/widget/notes/10567181/note/318916395/&quot;">这里</a>算是理解了吧。</p>
+<p>还有是对R的formula不熟悉，最后参考<a href="http://site.douban.com/182577/widget/notes/10567181/note/318916395/" target="_blank" rel="external">这里</a>算是理解了吧。</p>
 <h2 id="参考">参考</h2><ol>
-<li><a href="&quot;http://blog.csdn.net/pakko/article/details/37878837&quot;">逻辑回归</a></li>
-<li><a href="&quot;http://www.cnblogs.com/runner-ljt/p/4574275.html&quot;">R广义线性模型</a></li>
-<li><a href="&quot;http://site.douban.com/182577/widget/notes/10567181/note/318916395/&quot;">R中的formula与Formula</a></li>
+<li><a href="http://blog.csdn.net/pakko/article/details/37878837" target="_blank" rel="external">逻辑回归</a></li>
+<li><a href="http://www.cnblogs.com/runner-ljt/p/4574275.html" target="_blank" rel="external">R广义线性模型</a></li>
+<li><a href="http://site.douban.com/182577/widget/notes/10567181/note/318916395/" target="_blank" rel="external">R中的formula与Formula</a></li>
 </ol>
 
         
@@ -523,7 +592,7 @@
 </header>
     <div class="article-content">
         
-        <h2 id="背景">背景</h2><pre><code>一直想通过比赛练习什么的加强对机器学习算法的理解（工作都没用到什么机器学习算法），最近发现[<span class="link_label">kaggele</span>](<span class="link_url">"https://www.kaggle.com/"</span>)是一个不错网站。就找了上面一道名Digit Recognizer习题练手，借鉴多方观点，决定先尝试pca+knn方法（主要是我觉得比较简单利于理解）。以后再试试逻辑回归、SVM、贝叶斯、deep learning吧。
+        <h2 id="背景">背景</h2><pre><code>一直想通过比赛练习什么的加强对机器学习算法的理解（工作都没用到什么机器学习算法），最近发现[<span class="link_label">kaggele</span>](<span class="link_url">https://www.kaggle.com/</span>)是一个不错网站。就找了上面一道名Digit Recognizer习题练手，借鉴多方观点，决定先尝试pca+knn方法（主要是我觉得比较简单利于理解）。以后再试试逻辑回归、SVM、贝叶斯、deep learning吧。
 </code></pre><h2 id="思路">思路</h2><pre><code>思路其实很简单了，KNN是一个比较容易理解的分类算法。它的原理说起来也很简单，就是待分类数据的k个已经分好类的邻居，k个邻居中出现最多的就作为它的分类了。其实knn也可以用来做回归，只是不采用投票的方式，而是取k个邻居的均值，更准确点是按距离加权的中值。那么怎么衡量两个数据间的距离呢，算法有很多种，最常用的就是欧式距离拉.那么回到本题，每个图片其实是由28*28个像素组成，即数据的维度是784，如果直接上knn，由于维度太大，计算量也相当高了。目测普通单个机器得个一天吧。那么就可以使用到<span class="keyword">pca</span>降维了。我选择<span class="keyword">pca</span>降维度降到64，单机下几分钟就出结果了。提交几次终于成功了，正确率0.97186，二百多名，好开森，知足常乐，哈哈。代码就很简单了，下面贴出来：
 </code></pre><h2 id="代码">代码</h2><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">library(<span class="keyword">class</span>)</span><br><span class="line"></span><br><span class="line">train &lt;- <span class="keyword">read</span>.csv(<span class="string">"train.csv"</span>, header=TRUE)</span><br><span class="line"><span class="keyword">test</span> &lt;- <span class="keyword">read</span>.csv(<span class="string">"test.csv"</span>, header=TRUE)</span><br><span class="line"></span><br><span class="line">train &lt;- <span class="keyword">as</span>.<span class="literal">matrix</span>(train)</span><br><span class="line"><span class="keyword">test</span> &lt;- <span class="keyword">as</span>.<span class="literal">matrix</span>(<span class="keyword">test</span>)</span><br><span class="line"></span><br><span class="line">labels &lt;- <span class="keyword">as</span>.numeric(train[,1])</span><br><span class="line">train &lt;- train[,-1]</span><br><span class="line"></span><br><span class="line">all &lt;- rbind(train, <span class="keyword">test</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//计算主成分</span></span><br><span class="line"><span class="keyword">pca</span> &lt;- princomp(all)</span><br><span class="line"></span><br><span class="line"><span class="comment">//对训练数据降维转换</span></span><br><span class="line">train &lt;- train %*% <span class="keyword">pca</span><span class="label">$loadings</span>[,1:64]</span><br><span class="line"><span class="comment">//对测试数据降维转换</span></span><br><span class="line"><span class="keyword">test</span> &lt;- <span class="keyword">test</span> %*% <span class="keyword">pca</span><span class="label">$loadings</span>[,1:64]</span><br><span class="line"></span><br><span class="line"><span class="comment">//pre即是最终结果</span></span><br><span class="line">pre &lt;- knn(train, <span class="keyword">test</span>, labels, 9)</span><br></pre></td></tr></table></figure>
 <h2 id="细节">细节</h2><pre><code>第一次直接提交，报错了，格式错误。试题明明写的每行只需写出结果就行。搜了下才发现提交的结果要是csv格式的。第一行为固定标题，然后是数据，第一列<span class="property">id</span>，第二列识别结果，<span class="property">id</span>从<span class="number">1</span>递增。比如：
@@ -720,6 +789,10 @@ ImageId,Label
 		
 			
 				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
 			
 		
 			

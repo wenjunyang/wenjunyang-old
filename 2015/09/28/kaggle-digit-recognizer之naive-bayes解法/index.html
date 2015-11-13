@@ -97,8 +97,8 @@
 <h2 id="代码">代码</h2><figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">train &lt;- read.csv(<span class="string">"data/train.csv"</span>, header=<span class="type">TRUE</span>)</span><br><span class="line">test &lt;- read.csv(<span class="string">"data/test.csv"</span>, header=<span class="type">TRUE</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#注意要对label做类型转换，使用拉普拉斯平滑处理</span></span><br><span class="line">classifier &lt;- naiveBayes(<span class="keyword">as</span>.factor(label) ~ ., train, laplace = <span class="number">10</span>)</span><br><span class="line"><span class="literal">result</span> &lt;- predict(classifier, test)</span><br><span class="line"></span><br><span class="line"><span class="comment">#这个地方很奇怪，写入文件时result都+1了，所以提前-1，还没找到是什么原因</span></span><br><span class="line"><span class="literal">result</span>.table &lt;- data.frame(<span class="type">ImageId</span>=<span class="number">1</span>:nrow(test), <span class="type">Label</span>=<span class="keyword">as</span>.numeric(<span class="literal">result</span>) - <span class="number">1</span>)</span><br><span class="line">write.csv(<span class="literal">result</span>.table, <span class="string">"result/naive_bayes.csv"</span>, row.names = F)</span><br></pre></td></tr></table></figure>
 <h2 id="心得">心得</h2><p>朴素贝叶斯算法算是比较简单了，其实之前用的pca、knn、logistic regression、以及线性回归都是非常直观的算法，可能公式推导有的比较复杂。最近也算是了解了它们，然后使用已有的库做练习。后续再熟悉下svm、神经网络，然后就用R或者其他语言实现一遍，还有它们的mapreduce版本也尝试实现下，然后就是能自己用尽可能简单的语言将这些算法尽可能清晰地描述出来。这么一看，任务还是挺多滴。加油！</p>
 <h2 id="参考">参考</h2><ol>
-<li><a href="&quot;http://www.cnblogs.com/leoo2sk/archive/2010/09/17/naive-bayesian-classifier.html&quot;">朴素贝叶斯</a></li>
-<li><a href="&quot;http://www.inside-r.org/packages/cran/e1071/docs/naiveBayes&quot;">R naiveBayes</a></li>
+<li><a href="http://www.cnblogs.com/leoo2sk/archive/2010/09/17/naive-bayesian-classifier.html" target="_blank" rel="external">朴素贝叶斯</a></li>
+<li><a href="http://www.inside-r.org/packages/cran/e1071/docs/naiveBayes" target="_blank" rel="external">R naiveBayes</a></li>
 </ol>
   
 	</div>
@@ -186,6 +186,10 @@
 		
 			
 				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
 			
 		
 			

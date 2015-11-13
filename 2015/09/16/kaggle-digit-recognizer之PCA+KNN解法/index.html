@@ -11,19 +11,19 @@
     
 
     
-    <meta name="description" content="背景一直想通过比赛练习什么的加强对机器学习算法的理解（工作都没用到什么机器学习算法），最近发现[kaggele](&quot;https://www.kaggle.com/&quot;)是一个不错网站。就找了上面一道名Digit Recognizer习题练手，借鉴多方观点，决定先尝试pca+knn方法（主要是我觉得比较简单利于理解）。以后再试试逻辑回归、SVM、贝叶斯、deep learning吧。
-思路思路其实很简">
+    <meta name="description" content="背景一直想通过比赛练习什么的加强对机器学习算法的理解（工作都没用到什么机器学习算法），最近发现[kaggele](https://www.kaggle.com/)是一个不错网站。就找了上面一道名Digit Recognizer习题练手，借鉴多方观点，决定先尝试pca+knn方法（主要是我觉得比较简单利于理解）。以后再试试逻辑回归、SVM、贝叶斯、deep learning吧。
+思路思路其实很简单了">
 <meta property="og:type" content="article">
 <meta property="og:title" content="kaggle digit recognizer之PCA+KNN解法">
 <meta property="og:url" content="http://wendale.cn/2015/09/16/kaggle-digit-recognizer之PCA+KNN解法/index.html">
 <meta property="og:site_name" content="今夕何夕">
-<meta property="og:description" content="背景一直想通过比赛练习什么的加强对机器学习算法的理解（工作都没用到什么机器学习算法），最近发现[kaggele](&quot;https://www.kaggle.com/&quot;)是一个不错网站。就找了上面一道名Digit Recognizer习题练手，借鉴多方观点，决定先尝试pca+knn方法（主要是我觉得比较简单利于理解）。以后再试试逻辑回归、SVM、贝叶斯、deep learning吧。
-思路思路其实很简">
+<meta property="og:description" content="背景一直想通过比赛练习什么的加强对机器学习算法的理解（工作都没用到什么机器学习算法），最近发现[kaggele](https://www.kaggle.com/)是一个不错网站。就找了上面一道名Digit Recognizer习题练手，借鉴多方观点，决定先尝试pca+knn方法（主要是我觉得比较简单利于理解）。以后再试试逻辑回归、SVM、贝叶斯、deep learning吧。
+思路思路其实很简单了">
 <meta property="og:image" content="/images/kaggle_first.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kaggle digit recognizer之PCA+KNN解法">
-<meta name="twitter:description" content="背景一直想通过比赛练习什么的加强对机器学习算法的理解（工作都没用到什么机器学习算法），最近发现[kaggele](&quot;https://www.kaggle.com/&quot;)是一个不错网站。就找了上面一道名Digit Recognizer习题练手，借鉴多方观点，决定先尝试pca+knn方法（主要是我觉得比较简单利于理解）。以后再试试逻辑回归、SVM、贝叶斯、deep learning吧。
-思路思路其实很简">
+<meta name="twitter:description" content="背景一直想通过比赛练习什么的加强对机器学习算法的理解（工作都没用到什么机器学习算法），最近发现[kaggele](https://www.kaggle.com/)是一个不错网站。就找了上面一道名Digit Recognizer习题练手，借鉴多方观点，决定先尝试pca+knn方法（主要是我觉得比较简单利于理解）。以后再试试逻辑回归、SVM、贝叶斯、deep learning吧。
+思路思路其实很简单了">
 
     
     <link rel="alternative" href="/atom.xml" title="今夕何夕" type="application/atom+xml">
@@ -96,7 +96,7 @@
 </header>
 	<div class="article-content">
 		
-		<h2 id="背景">背景</h2><pre><code>一直想通过比赛练习什么的加强对机器学习算法的理解（工作都没用到什么机器学习算法），最近发现[<span class="link_label">kaggele</span>](<span class="link_url">"https://www.kaggle.com/"</span>)是一个不错网站。就找了上面一道名Digit Recognizer习题练手，借鉴多方观点，决定先尝试pca+knn方法（主要是我觉得比较简单利于理解）。以后再试试逻辑回归、SVM、贝叶斯、deep learning吧。
+		<h2 id="背景">背景</h2><pre><code>一直想通过比赛练习什么的加强对机器学习算法的理解（工作都没用到什么机器学习算法），最近发现[<span class="link_label">kaggele</span>](<span class="link_url">https://www.kaggle.com/</span>)是一个不错网站。就找了上面一道名Digit Recognizer习题练手，借鉴多方观点，决定先尝试pca+knn方法（主要是我觉得比较简单利于理解）。以后再试试逻辑回归、SVM、贝叶斯、deep learning吧。
 </code></pre><h2 id="思路">思路</h2><pre><code>思路其实很简单了，KNN是一个比较容易理解的分类算法。它的原理说起来也很简单，就是待分类数据的k个已经分好类的邻居，k个邻居中出现最多的就作为它的分类了。其实knn也可以用来做回归，只是不采用投票的方式，而是取k个邻居的均值，更准确点是按距离加权的中值。那么怎么衡量两个数据间的距离呢，算法有很多种，最常用的就是欧式距离拉.那么回到本题，每个图片其实是由28*28个像素组成，即数据的维度是784，如果直接上knn，由于维度太大，计算量也相当高了。目测普通单个机器得个一天吧。那么就可以使用到<span class="keyword">pca</span>降维了。我选择<span class="keyword">pca</span>降维度降到64，单机下几分钟就出结果了。提交几次终于成功了，正确率0.97186，二百多名，好开森，知足常乐，哈哈。代码就很简单了，下面贴出来：
 </code></pre><h2 id="代码">代码</h2><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">library(<span class="keyword">class</span>)</span><br><span class="line"></span><br><span class="line">train &lt;- <span class="keyword">read</span>.csv(<span class="string">"train.csv"</span>, header=TRUE)</span><br><span class="line"><span class="keyword">test</span> &lt;- <span class="keyword">read</span>.csv(<span class="string">"test.csv"</span>, header=TRUE)</span><br><span class="line"></span><br><span class="line">train &lt;- <span class="keyword">as</span>.<span class="literal">matrix</span>(train)</span><br><span class="line"><span class="keyword">test</span> &lt;- <span class="keyword">as</span>.<span class="literal">matrix</span>(<span class="keyword">test</span>)</span><br><span class="line"></span><br><span class="line">labels &lt;- <span class="keyword">as</span>.numeric(train[,1])</span><br><span class="line">train &lt;- train[,-1]</span><br><span class="line"></span><br><span class="line">all &lt;- rbind(train, <span class="keyword">test</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//计算主成分</span></span><br><span class="line"><span class="keyword">pca</span> &lt;- princomp(all)</span><br><span class="line"></span><br><span class="line"><span class="comment">//对训练数据降维转换</span></span><br><span class="line">train &lt;- train %*% <span class="keyword">pca</span><span class="label">$loadings</span>[,1:64]</span><br><span class="line"><span class="comment">//对测试数据降维转换</span></span><br><span class="line"><span class="keyword">test</span> &lt;- <span class="keyword">test</span> %*% <span class="keyword">pca</span><span class="label">$loadings</span>[,1:64]</span><br><span class="line"></span><br><span class="line"><span class="comment">//pre即是最终结果</span></span><br><span class="line">pre &lt;- knn(train, <span class="keyword">test</span>, labels, 9)</span><br></pre></td></tr></table></figure>
 <h2 id="细节">细节</h2><pre><code>第一次直接提交，报错了，格式错误。试题明明写的每行只需写出结果就行。搜了下才发现提交的结果要是csv格式的。第一行为固定标题，然后是数据，第一列<span class="property">id</span>，第二列识别结果，<span class="property">id</span>从<span class="number">1</span>递增。比如：
@@ -194,6 +194,10 @@ ImageId,Label
 		
 			
 				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
 			
 		
 			
