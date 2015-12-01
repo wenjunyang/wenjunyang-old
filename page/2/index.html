@@ -81,6 +81,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/05/10/随机从数组中抽取多个元素/" title="随机从数组中抽取多个元素" itemprop="url">随机从数组中抽取多个元素</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-10T06:27:04.000Z" itemprop="datePublished"> 发表于 2015-05-10</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <blockquote>
+<p>如何优雅地随机抽取呢？</p>
+</blockquote>
+<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 随机生成一个[<span class="number">0</span>, n-<span class="number">1</span>]的数</span><br><span class="line"> */</span><br><span class="line"><span class="type">int</span> rand_index(<span class="type">int</span> n) &#123;</span><br><span class="line">    srand(time(<span class="type">NULL</span>));</span><br><span class="line">    <span class="keyword">return</span> rand() % n;</span><br><span class="line">&#125;</span><br><span class="line">/**</span><br><span class="line"> * 问题描述：从数组<span class="type">array</span>中随机抽取extract_num个元素，组成新的数组返回。</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line"><span class="type">int</span>* random_extract(<span class="type">int</span> <span class="type">array</span>[], <span class="type">int</span> array_num, <span class="type">int</span> extract_num) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span>* <span class="literal">result</span> = (<span class="type">int</span>*)malloc(extract_num * sizeof(<span class="type">int</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; extract_num; ++i) &#123;</span><br><span class="line">        <span class="type">int</span> tmp = <span class="type">array</span>[array_num - <span class="number">1</span> - i];</span><br><span class="line">        <span class="type">int</span> index = rand_index(array_num - <span class="number">1</span> - i);</span><br><span class="line">        <span class="type">array</span>[array_num - <span class="number">1</span> - i] = <span class="type">array</span>[index];</span><br><span class="line">        <span class="type">array</span>[index] = tmp;</span><br><span class="line">        <span class="literal">result</span>[i] = tmp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/笔试题/">笔试题</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/05/10/随机从数组中抽取多个元素/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/10/随机从数组中抽取多个元素/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/05/10/单链表O(1)插入删除/" title="O(1)复杂度实现单链表的插入删除操作" itemprop="url">O(1)复杂度实现单链表的插入删除操作</a>
   </h1>
   <p class="article-author">By
@@ -174,6 +234,10 @@
 		
 			
 				<li><a href="/tags/hive/" title="hive">hive<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/算法/" title="算法">算法<sup>1</sup></a></li>
 			
 		
 		</ul>

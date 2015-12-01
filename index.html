@@ -81,6 +81,72 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/12/01/优先级矩阵求表达式的值/" title="优先级矩阵求算数表达式" itemprop="url">优先级矩阵求算数表达式</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-01T04:21:35.000Z" itemprop="datePublished"> 发表于 2015-12-01</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>算数表达式求值是现代编译器要解决的最基本的问题。所谓表达式，就是包含常数、变量以及数学运算符、逻辑运算符、括号等的字符串。本次为了练习，只考虑包括加减乘除、正负号、括号的表达式。</p>
+<hr>
+<h2 id="1-_优先级">1. 优先级</h2><p>我们让右括号的优先级最低，左括号最高，其次正负号，其次乘除，最后加减，同一优先级左结合性时左面的高，右结核性右面高，加减乘除均是左结合性，正负号右结合性，左括号右结合性，右括号左结合性。综上可得优先级矩阵：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># row represent left operator</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># col represent right operator</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># PRIORITY_MATRIX[i][j] is True when i has high priority, otherwise, i has low priority</span></span><br><span class="line"></span><br><span class="line">PRIORITY_MATRIX = (</span><br><span class="line"></span><br><span class="line"><span class="comment"># +,-,*,/,+(sign),-(sign),(,)</span></span><br><span class="line"></span><br><span class="line">(<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">True</span>),<span class="comment">#+</span></span><br><span class="line"></span><br><span class="line">(<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">True</span>),<span class="comment">#-</span></span><br><span class="line"></span><br><span class="line">(<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">True</span>),<span class="comment">#*</span></span><br><span class="line"></span><br><span class="line">(<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">True</span>),<span class="comment">#/</span></span><br><span class="line"></span><br><span class="line">(<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">True</span>),<span class="comment">#+(sign)</span></span><br><span class="line"></span><br><span class="line">(<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">True</span>),<span class="comment">#-(sign)</span></span><br><span class="line"></span><br><span class="line">(<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">True</span>),<span class="comment">#(</span></span><br><span class="line"></span><br><span class="line">(<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>,<span class="keyword">True</span>)<span class="comment">#)</span></span><br><span class="line"></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">#符号编码</span></span><br><span class="line">PLUS_OPERATOR = <span class="number">0</span></span><br><span class="line">MINUS_OPERATOR = <span class="number">1</span></span><br><span class="line">MULTIPLY_OPERATOR = <span class="number">2</span></span><br><span class="line">DIVIDE_OPERATOR = <span class="number">3</span></span><br><span class="line">POSITIVE_SIGN_OPERATOR = <span class="number">4</span></span><br><span class="line">NEGATIVE_SIGN_OPERATOR = <span class="number">5</span></span><br><span class="line">LEFT_BRACKET_OPERATOR = <span class="number">6</span></span><br><span class="line">RIGHT_BRACKET_OPERATOR = <span class="number">7</span></span><br></pre></td></tr></table></figure>
+<p>PRIORITY_MATRIX[op1][op2]的含义是:操作符op1在左，op2在右，op1的优先级是否高于op2.</p>
+<h2 id="2-_表达式符号解析">2. 表达式符号解析</h2><p>首先要解析表达式，此时需要注意的是正负号的识别，因为加减和正负号分别是同一个字符。那么当面对一个’+’或者’-‘字符的情况下如何判断它到底是哪一种符号呢？<br><strong>如果上一个符号是数字或者右括号，那么就是加减号，否则为正负号.</strong><br>有了上面的规则符号解析就很容易了：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">push_num</span><span class="params">(tokens, current_num)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> current_num:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            tokens.append(Token(<span class="keyword">False</span>, float(<span class="string">''</span>.join(current_num))))</span><br><span class="line">            <span class="keyword">del</span> current_num[:]</span><br><span class="line">        <span class="keyword">except</span> Exception:</span><br><span class="line">            <span class="keyword">raise</span> Exception(<span class="string">'parse num failed'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">judge_operator</span><span class="params">(tokens, ch)</span>:</span></span><br><span class="line">    last_token = tokens[-<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> ch == <span class="string">'+'</span>:</span><br><span class="line">        <span class="keyword">if</span> last_token.is_operator <span class="keyword">and</span> last_token.value != RIGHT_BRACKET_OPERATOR:</span><br><span class="line">            op = POSITIVE_SIGN_OPERATOR</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            op = PLUS_OPERATOR</span><br><span class="line">    <span class="keyword">elif</span> ch == <span class="string">'-'</span>:</span><br><span class="line">        <span class="keyword">if</span> last_token.is_operator <span class="keyword">and</span> last_token.value != RIGHT_BRACKET_OPERATOR:</span><br><span class="line">            op = NEGATIVE_SIGN_OPERATOR</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            op = MINUS_OPERATOR</span><br><span class="line">    <span class="keyword">elif</span> ch == <span class="string">'*'</span>:</span><br><span class="line">        op = MULTIPLY_OPERATOR</span><br><span class="line">    <span class="keyword">elif</span> ch == <span class="string">'/'</span>:</span><br><span class="line">        op = DIVIDE_OPERATOR</span><br><span class="line">    <span class="keyword">elif</span> ch == <span class="string">'('</span>:</span><br><span class="line">        op = LEFT_BRACKET_OPERATOR</span><br><span class="line">    <span class="keyword">elif</span> ch == <span class="string">')'</span>:</span><br><span class="line">        op = RIGHT_BRACKET_OPERATOR</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">'unknown operator '</span> + ch)</span><br><span class="line">    <span class="keyword">return</span> op</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse_tokens</span><span class="params">(expression)</span>:</span></span><br><span class="line">    tokens = [Token(<span class="keyword">True</span>, LEFT_BRACKET_OPERATOR)]</span><br><span class="line">    current_num = []</span><br><span class="line">    <span class="keyword">for</span> ch <span class="keyword">in</span> expression + <span class="string">')'</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="string">'0'</span> &lt;= ch &lt;= <span class="string">'9'</span> <span class="keyword">or</span> ch == <span class="string">'.'</span>:</span><br><span class="line">            current_num.append(ch)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            push_num(tokens, current_num)</span><br><span class="line">            <span class="keyword">if</span> ch == <span class="string">' '</span>:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            op = judge_operator(tokens, ch)</span><br><span class="line">            tokens.append(Token(<span class="keyword">True</span>, op))</span><br><span class="line">    <span class="keyword">return</span> tokens</span><br></pre></td></tr></table></figure></p>
+<p>在解析符号的，为了后续计算不失一般性，在表达式首尾分别加上左右括号。</p>
+<h2 id="3-_计算值">3. 计算值</h2><p>这里使用两个栈来分别存放操作数(operand_stack)和操作符(operator_stack),计算过程如下。<br>从前往后遍历符号表：<br>&nbsp;&nbsp;&nbsp;&nbsp;1)如果是数字，入操作数栈<br>&nbsp;&nbsp;&nbsp;&nbsp;2)如果是操作符，设为op，重复以下过程：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a）取操作符栈顶操作符top.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b）如果top优先级小于op，则将op压入操作符栈，结束循环。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c）如果top优先级大于op，弹出top,从操作数栈弹出相应数目的操作数，计算结果并压入操作数栈。如果top是左括号，结束循环，否则继续循环。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">OP_MAP = &#123;</span><br><span class="line">    PLUS_OPERATOR: <span class="keyword">lambda</span> x, y: x + y,</span><br><span class="line">    MINUS_OPERATOR: <span class="keyword">lambda</span> x, y: x - y,</span><br><span class="line">    MULTIPLY_OPERATOR: <span class="keyword">lambda</span> x, y: x * y,</span><br><span class="line">    DIVIDE_OPERATOR: <span class="keyword">lambda</span> x, y: x / y,</span><br><span class="line">    POSITIVE_SIGN_OPERATOR: <span class="keyword">lambda</span> x: x,</span><br><span class="line">    NEGATIVE_SIGN_OPERATOR: <span class="keyword">lambda</span> x: -x,</span><br><span class="line">    LEFT_BRACKET_OPERATOR: <span class="keyword">lambda</span> x: x</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_binary_operator_calculate</span><span class="params">(operand_stack, op)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(operand_stack) &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">'not enough operand for operator %d'</span> % op)</span><br><span class="line">    right = operand_stack.pop()</span><br><span class="line">    left = operand_stack.pop()</span><br><span class="line">    <span class="keyword">if</span> op == DIVIDE_OPERATOR <span class="keyword">and</span> right == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">'divisor can not be zero'</span>)</span><br><span class="line">    operand_stack.append(OP_MAP[op](left, right))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_unary_operator_calculate</span><span class="params">(operand_stack, op)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(operand_stack) &lt; <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">'not enough operand for operator %d'</span> % op)</span><br><span class="line">    operand_stack.append(OP_MAP[op](operand_stack.pop()))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_op</span><span class="params">(operator_stack, operand_stack, op)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> operator_stack:</span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">'operator should be empty'</span>)</span><br><span class="line">    <span class="keyword">if</span> PRIORITY_MATRIX[operator_stack[-<span class="number">1</span>]][op]:</span><br><span class="line">        last_op = operator_stack.pop()</span><br><span class="line">        <span class="keyword">if</span> last_op <span class="keyword">in</span> (PLUS_OPERATOR, MINUS_OPERATOR, MULTIPLY_OPERATOR, DIVIDE_OPERATOR):</span><br><span class="line">            do_binary_operator_calculate(operand_stack, last_op)</span><br><span class="line">            on_op(operator_stack, operand_stack, op)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            do_unary_operator_calculate(operand_stack, last_op)</span><br><span class="line">            <span class="keyword">if</span> last_op != LEFT_BRACKET_OPERATOR:</span><br><span class="line">                on_op(operator_stack, operand_stack, op)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        operator_stack.append(op)</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">calculate</span><span class="params">(expression)</span>:</span></span><br><span class="line">    tokens = parse_tokens(expression)</span><br><span class="line">    operator_stack = [tokens[<span class="number">0</span>].value]</span><br><span class="line">    operand_stack = []</span><br><span class="line">    <span class="keyword">for</span> token <span class="keyword">in</span> tokens[<span class="number">1</span>:]:</span><br><span class="line">        <span class="keyword">if</span> token.is_operator:</span><br><span class="line">            on_op(operator_stack, operand_stack, token.value)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            operand_stack.append(token.value)</span><br><span class="line">    <span class="keyword">if</span> len(operand_stack) != <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">'too many operand left'</span>)</span><br><span class="line">    <span class="keyword">if</span> operator_stack:</span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">'operator left'</span>)</span><br><span class="line">    <span class="keyword">return</span> operand_stack.pop()</span><br></pre></td></tr></table></figure></p>
+<p>到这已经完成了算数表达式的计算。需要注意的是异常情况的处理。下面再加上主函数，一个简易计算器就实现了：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    while True:</span><br><span class="line">        text = <span class="function"><span class="title">raw_input</span><span class="params">(<span class="string">'&gt;&gt;&gt;'</span>)</span></span></span><br><span class="line">        <span class="function"><span class="title">print</span><span class="params">(calculate(text)</span></span>)</span><br></pre></td></tr></table></figure></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/算法/">算法</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/01/优先级矩阵求表达式的值/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/01/优先级矩阵求表达式的值/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/11/19/近期学习计划/" title="近期学习计划" itemprop="url">近期学习计划</a>
   </h1>
   <p class="article-author">By
@@ -701,66 +767,6 @@ ImageId,Label
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/05/10/随机从数组中抽取多个元素/" title="随机从数组中抽取多个元素" itemprop="url">随机从数组中抽取多个元素</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
-		
-  <p class="article-time">
-    <time datetime="2015-05-10T06:27:04.000Z" itemprop="datePublished"> 发表于 2015-05-10</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <blockquote>
-<p>如何优雅地随机抽取呢？</p>
-</blockquote>
-<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 随机生成一个[<span class="number">0</span>, n-<span class="number">1</span>]的数</span><br><span class="line"> */</span><br><span class="line"><span class="type">int</span> rand_index(<span class="type">int</span> n) &#123;</span><br><span class="line">    srand(time(<span class="type">NULL</span>));</span><br><span class="line">    <span class="keyword">return</span> rand() % n;</span><br><span class="line">&#125;</span><br><span class="line">/**</span><br><span class="line"> * 问题描述：从数组<span class="type">array</span>中随机抽取extract_num个元素，组成新的数组返回。</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line"><span class="type">int</span>* random_extract(<span class="type">int</span> <span class="type">array</span>[], <span class="type">int</span> array_num, <span class="type">int</span> extract_num) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span>* <span class="literal">result</span> = (<span class="type">int</span>*)malloc(extract_num * sizeof(<span class="type">int</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; extract_num; ++i) &#123;</span><br><span class="line">        <span class="type">int</span> tmp = <span class="type">array</span>[array_num - <span class="number">1</span> - i];</span><br><span class="line">        <span class="type">int</span> index = rand_index(array_num - <span class="number">1</span> - i);</span><br><span class="line">        <span class="type">array</span>[array_num - <span class="number">1</span> - i] = <span class="type">array</span>[index];</span><br><span class="line">        <span class="type">array</span>[index] = tmp;</span><br><span class="line">        <span class="literal">result</span>[i] = tmp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/笔试题/">笔试题</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/05/10/随机从数组中抽取多个元素/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/10/随机从数组中抽取多个元素/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -798,6 +804,10 @@ ImageId,Label
 		
 			
 				<li><a href="/tags/hive/" title="hive">hive<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/算法/" title="算法">算法<sup>1</sup></a></li>
 			
 		
 		</ul>
