@@ -4,22 +4,25 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>kaggle digit recognizer之naive bayes解法 | 今夕何夕</title>
+    <title>就这么过去了 | 今夕何夕</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wendale">
     
 
     
-    <meta name="description" content="naive bayesnaive bayes(朴素贝叶斯)是一种常见的分类算法，原理就是概率论一开始讲的贝叶斯原理。之所以naive，是因为它有个很关键的假设：各个特征之间是无关联的。这是一种理想化的假设，所以如果特征之间关联比较密切，就不适合了。朴素贝叶斯在文本分类应用广泛，如分词，垃圾邮件识别等。至于做手写图片识别，其实是不太合适的，因为图片的像素之间关联还是挺大的，但是作为初步学习该方法，还">
+    <meta name="description" content="五个月用来爱一个人五个月用来忘一个人一年过去了
+前半生用来爱一个人后半生用来忘一个人一辈子过去了">
 <meta property="og:type" content="article">
-<meta property="og:title" content="kaggle digit recognizer之naive bayes解法">
-<meta property="og:url" content="http://wendale.cn/2015/09/28/kaggle-digit-recognizer之naive-bayes解法/index.html">
+<meta property="og:title" content="就这么过去了">
+<meta property="og:url" content="http://wendale.cn/2016/01/05/就这么过去了/index.html">
 <meta property="og:site_name" content="今夕何夕">
-<meta property="og:description" content="naive bayesnaive bayes(朴素贝叶斯)是一种常见的分类算法，原理就是概率论一开始讲的贝叶斯原理。之所以naive，是因为它有个很关键的假设：各个特征之间是无关联的。这是一种理想化的假设，所以如果特征之间关联比较密切，就不适合了。朴素贝叶斯在文本分类应用广泛，如分词，垃圾邮件识别等。至于做手写图片识别，其实是不太合适的，因为图片的像素之间关联还是挺大的，但是作为初步学习该方法，还">
+<meta property="og:description" content="五个月用来爱一个人五个月用来忘一个人一年过去了
+前半生用来爱一个人后半生用来忘一个人一辈子过去了">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="kaggle digit recognizer之naive bayes解法">
-<meta name="twitter:description" content="naive bayesnaive bayes(朴素贝叶斯)是一种常见的分类算法，原理就是概率论一开始讲的贝叶斯原理。之所以naive，是因为它有个很关键的假设：各个特征之间是无关联的。这是一种理想化的假设，所以如果特征之间关联比较密切，就不适合了。朴素贝叶斯在文本分类应用广泛，如分词，垃圾邮件识别等。至于做手写图片识别，其实是不太合适的，因为图片的像素之间关联还是挺大的，但是作为初步学习该方法，还">
+<meta name="twitter:title" content="就这么过去了">
+<meta name="twitter:description" content="五个月用来爱一个人五个月用来忘一个人一年过去了
+前半生用来爱一个人后半生用来忘一个人一辈子过去了">
 
     
     <link rel="alternative" href="/atom.xml" title="今夕何夕" type="application/atom+xml">
@@ -79,27 +82,21 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/09/28/kaggle-digit-recognizer之naive-bayes解法/" title="kaggle digit recognizer之naive bayes解法" itemprop="url">kaggle digit recognizer之naive bayes解法</a>
+      <a href="/2016/01/05/就这么过去了/" title="就这么过去了" itemprop="url">就这么过去了</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
 		
   <p class="article-time">
-    <time datetime="2015-09-28T09:58:36.000Z" itemprop="datePublished"> 发表于 2015-09-28</time>
+    <time datetime="2016-01-05T15:21:05.000Z" itemprop="datePublished"> 发表于 2016-01-05</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		<h2 id="naive_bayes">naive bayes</h2><p>naive bayes(朴素贝叶斯)是一种常见的分类算法，原理就是概率论一开始讲的贝叶斯原理。之所以naive，是因为它有个很关键的假设：各个特征之间是无关联的。这是一种理想化的假设，所以如果特征之间关联比较密切，就不适合了。朴素贝叶斯在文本分类应用广泛，如分词，垃圾邮件识别等。至于做手写图片识别，其实是不太合适的，因为图片的像素之间关联还是挺大的，但是作为初步学习该方法，还是尝试了下，结果确实不怎么样，不到0.6的正确率，网上看有用朴素贝叶斯达到0.8的，应该是在哪方面做优化了。关于朴素贝叶斯方法的详细介绍，可以看下面参考1的链接，讲的很详细直观。</p>
-<h2 id="实现">实现</h2><p>R的e1071包有naiveBayes方法，但是使用该方法要注意，label一定得是factor类型的，函数文档也说了，只能做离散值的预测，如果是数字它会认为是连续的。所以可以看到代码中对label做了类型转换。关于该函数的参考文档，可以参考2的链接。</p>
-<h2 id="代码">代码</h2><figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">train &lt;- read.csv(<span class="string">"data/train.csv"</span>, header=<span class="type">TRUE</span>)</span><br><span class="line">test &lt;- read.csv(<span class="string">"data/test.csv"</span>, header=<span class="type">TRUE</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#注意要对label做类型转换，使用拉普拉斯平滑处理</span></span><br><span class="line">classifier &lt;- naiveBayes(<span class="keyword">as</span>.factor(label) ~ ., train, laplace = <span class="number">10</span>)</span><br><span class="line"><span class="literal">result</span> &lt;- predict(classifier, test)</span><br><span class="line"></span><br><span class="line"><span class="comment">#这个地方很奇怪，写入文件时result都+1了，所以提前-1，还没找到是什么原因</span></span><br><span class="line"><span class="literal">result</span>.table &lt;- data.frame(<span class="type">ImageId</span>=<span class="number">1</span>:nrow(test), <span class="type">Label</span>=<span class="keyword">as</span>.numeric(<span class="literal">result</span>) - <span class="number">1</span>)</span><br><span class="line">write.csv(<span class="literal">result</span>.table, <span class="string">"result/naive_bayes.csv"</span>, row.names = F)</span><br></pre></td></tr></table></figure>
-<h2 id="心得">心得</h2><p>朴素贝叶斯算法算是比较简单了，其实之前用的pca、knn、logistic regression、以及线性回归都是非常直观的算法，可能公式推导有的比较复杂。最近也算是了解了它们，然后使用已有的库做练习。后续再熟悉下svm、神经网络，然后就用R或者其他语言实现一遍，还有它们的mapreduce版本也尝试实现下，然后就是能自己用尽可能简单的语言将这些算法尽可能清晰地描述出来。这么一看，任务还是挺多滴。加油！</p>
-<h2 id="参考">参考</h2><ol>
-<li><a href="http://www.cnblogs.com/leoo2sk/archive/2010/09/17/naive-bayesian-classifier.html" target="_blank" rel="external">朴素贝叶斯</a></li>
-<li><a href="http://www.inside-r.org/packages/cran/e1071/docs/naiveBayes" target="_blank" rel="external">R naiveBayes</a></li>
-</ol>
+		<p>五个月用来爱一个人<br>五个月用来忘一个人<br>一年过去了</p>
+<p>前半生用来爱一个人<br>后半生用来忘一个人<br>一辈子过去了</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -108,7 +105,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/kaggle/">kaggle</a><a href="/tags/机器学习/">机器学习</a>
+  <span></span> <a href="/tags/湿人/">湿人</a>
   </div>
 
 </div>
@@ -117,7 +114,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://wendale.cn/2015/09/28/kaggle-digit-recognizer之naive-bayes解法/" data-title="kaggle digit recognizer之naive bayes解法 | 今夕何夕" data-tsina="3283060652" class="share clearfix">
+	  <div data-url="http://wendale.cn/2016/01/05/就这么过去了/" data-title="就这么过去了 | 今夕何夕" data-tsina="3283060652" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -130,19 +127,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/10/30/感知机模型-统计学习方法笔记（一）/" title="感知机模型--统计学习方法笔记（一）">
-  <strong>上一篇：</strong><br/>
-  <span>
-  感知机模型--统计学习方法笔记（一）</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/09/24/hive-udf使用/"  title="hive udf使用">
+<a href="/2015/12/05/字符串相关的若干算法/"  title="字符串相关的若干算法">
  <strong>下一篇：</strong><br/> 
- <span>hive udf使用
+ <span>字符串相关的若干算法
 </span>
 </a>
 </div>
@@ -151,7 +140,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/09/28/kaggle-digit-recognizer之naive-bayes解法/" data-title="kaggle digit recognizer之naive bayes解法" data-url="http://wendale.cn/2015/09/28/kaggle-digit-recognizer之naive-bayes解法/"></div>
+	<div class="ds-thread" data-thread-key="2016/01/05/就这么过去了/" data-title="就这么过去了" data-url="http://wendale.cn/2016/01/05/就这么过去了/"></div>
 </section>
 
 
@@ -161,7 +150,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#naive_bayes"><span class="toc-number">1.</span> <span class="toc-text">naive bayes</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现"><span class="toc-number">2.</span> <span class="toc-text">实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码"><span class="toc-number">3.</span> <span class="toc-text">代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#心得"><span class="toc-number">4.</span> <span class="toc-text">心得</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+ 
  
   </div>
 
