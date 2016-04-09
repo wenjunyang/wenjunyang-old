@@ -81,6 +81,59 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/04/09/myself/" title="myself" itemprop="url">myself</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
+		
+  <p class="article-time">
+    <time datetime="2016-04-09T04:04:54.000Z" itemprop="datePublished"> 发表于 2016-04-09</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><img src="/images/myself.jpg" alt=""></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/04/09/myself/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/04/09/myself/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/03/18/一道小学数学题/" title="一道小学数学题" itemprop="url">一道小学数学题</a>
   </h1>
   <p class="article-author">By
@@ -94,7 +147,7 @@
 </header>
     <div class="article-content">
         
-        <h1 id="解今天在西典佳缘群看到的香港小学数学题">解今天在西典佳缘群看到的香港小学数学题</h1><p><img src="/images/math_exam.jpg" alt=""></p>
+        <h1 id="解今天看到的香港小学数学题">解今天看到的香港小学数学题</h1><p><img src="/images/math_exam.jpg" alt=""></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 之前写过的求全排列下一个升序排列</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">next_permutation</span><span class="params">(permutation)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(permutation) - <span class="number">1</span>, <span class="number">0</span>, -<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> permutation[i] &gt; permutation[i-<span class="number">1</span>]:</span><br><span class="line">            min_index = i</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(i, len(permutation)):</span><br><span class="line">                <span class="keyword">if</span> permutation[i-<span class="number">1</span>] &lt; permutation[j] &lt; permutation[min_index]:</span><br><span class="line">                    min_index = j</span><br><span class="line">            permutation[i-<span class="number">1</span>], permutation[min_index] = permutation[min_index], permutation[i-<span class="number">1</span>]</span><br><span class="line">            m = i</span><br><span class="line">            n = len(permutation) - <span class="number">1</span></span><br><span class="line">            <span class="keyword">while</span> m &lt; n:</span><br><span class="line">                permutation[m], permutation[n] = permutation[n], permutation[m]</span><br><span class="line">                m += <span class="number">1</span></span><br><span class="line">                n -= <span class="number">1</span></span><br><span class="line">            <span class="keyword">return</span> permutation</span><br><span class="line">    <span class="keyword">return</span> []</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 枚举所有可能性，即10个数选9个的全排列</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">all_prob</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">10</span>):</span><br><span class="line">        first = range(<span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">        <span class="keyword">del</span> first[i]</span><br><span class="line">        <span class="keyword">while</span> (first):</span><br><span class="line">            <span class="keyword">yield</span> first</span><br><span class="line">            first = next_permutation(first)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="keyword">for</span> p <span class="keyword">in</span> all_prob():</span><br><span class="line">        d = dict(zip([<span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'C'</span>, <span class="string">'D'</span>, <span class="string">'E'</span>, <span class="string">'F'</span>, <span class="string">'G'</span>, <span class="string">'H'</span>, <span class="string">'P'</span>], p))</span><br><span class="line">        res1 = d[<span class="string">'A'</span>] * <span class="number">10</span> + d[<span class="string">'B'</span>] - d[<span class="string">'C'</span>] * <span class="number">10</span> - d[<span class="string">'D'</span>]</span><br><span class="line">        res2 = res1 + d[<span class="string">'G'</span>] * <span class="number">10</span> + d[<span class="string">'H'</span>]</span><br><span class="line">        <span class="keyword">if</span> res1 == d[<span class="string">'E'</span>] * <span class="number">10</span> + d[<span class="string">'F'</span>] <span class="keyword">and</span> res2 == <span class="number">111</span> * d[<span class="string">'P'</span>]\</span><br><span class="line">                <span class="keyword">and</span> d[<span class="string">'A'</span>] * d[<span class="string">'C'</span>] * d[<span class="string">'E'</span>] * d[<span class="string">'G'</span>] * d[<span class="string">'P'</span>] != <span class="number">0</span>:</span><br><span class="line">            print(d)</span><br></pre></td></tr></table></figure>
 <h2 id="结果如下：">结果如下：</h2><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">'A'</span>: <span class="number">8</span>, <span class="string">'C'</span>: <span class="number">4</span>, <span class="string">'B'</span>: <span class="number">5</span>, <span class="string">'E'</span>: <span class="number">3</span>, <span class="string">'D'</span>: <span class="number">6</span>, <span class="string">'G'</span>: <span class="number">7</span>, <span class="string">'F'</span>: <span class="number">9</span>, <span class="string">'H'</span>: <span class="number">2</span>, <span class="string">'P'</span>: <span class="number">1</span>&#125;</span><br><span class="line">&#123;<span class="string">'A'</span>: <span class="number">8</span>, <span class="string">'C'</span>: <span class="number">5</span>, <span class="string">'B'</span>: <span class="number">6</span>, <span class="string">'E'</span>: <span class="number">3</span>, <span class="string">'D'</span>: <span class="number">4</span>, <span class="string">'G'</span>: <span class="number">7</span>, <span class="string">'F'</span>: <span class="number">2</span>, <span class="string">'H'</span>: <span class="number">9</span>, <span class="string">'P'</span>: <span class="number">1</span>&#125;</span><br><span class="line">&#123;<span class="string">'A'</span>: <span class="number">9</span>, <span class="string">'C'</span>: <span class="number">2</span>, <span class="string">'B'</span>: <span class="number">5</span>, <span class="string">'E'</span>: <span class="number">6</span>, <span class="string">'D'</span>: <span class="number">7</span>, <span class="string">'G'</span>: <span class="number">4</span>, <span class="string">'F'</span>: <span class="number">8</span>, <span class="string">'H'</span>: <span class="number">3</span>, <span class="string">'P'</span>: <span class="number">1</span>&#125;</span><br><span class="line">&#123;<span class="string">'A'</span>: <span class="number">9</span>, <span class="string">'C'</span>: <span class="number">2</span>, <span class="string">'B'</span>: <span class="number">0</span>, <span class="string">'E'</span>: <span class="number">6</span>, <span class="string">'D'</span>: <span class="number">7</span>, <span class="string">'G'</span>: <span class="number">4</span>, <span class="string">'F'</span>: <span class="number">3</span>, <span class="string">'H'</span>: <span class="number">8</span>, <span class="string">'P'</span>: <span class="number">1</span>&#125;</span><br><span class="line">&#123;<span class="string">'A'</span>: <span class="number">9</span>, <span class="string">'C'</span>: <span class="number">6</span>, <span class="string">'B'</span>: <span class="number">0</span>, <span class="string">'E'</span>: <span class="number">2</span>, <span class="string">'D'</span>: <span class="number">3</span>, <span class="string">'G'</span>: <span class="number">8</span>, <span class="string">'F'</span>: <span class="number">7</span>, <span class="string">'H'</span>: <span class="number">4</span>, <span class="string">'P'</span>: <span class="number">1</span>&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="后记">后记</h2><p>今天发现python的itertools库提供了丰富的排列组合工具，all_prob函数可以用itertools.permutations(range(0, 10), 9)代替。</p>
@@ -654,84 +707,6 @@
 	
 	  	<span></span>
 		<a href="/2015/09/28/kaggle-digit-recognizer之naive-bayes解法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/09/28/kaggle-digit-recognizer之naive-bayes解法/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/09/24/hive-udf使用/" title="hive udf使用" itemprop="url">hive udf使用</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="wendale" target="_blank" itemprop="author">wendale</a>
-		
-  <p class="article-time">
-    <time datetime="2015-09-24T10:21:35.000Z" itemprop="datePublished"> 发表于 2015-09-24</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>hive以udf的方式提供了扩展hive的方法。每个udf只需要继承hive指定的类，通过固定的方法名识别出提供的方法。工作中经常遇到这种场景：计算周累计或者月累计。计算的逻辑是判断今天与昨天是否属于同一个周（月），如果是，结果为昨天结果加上今天的结果，否则结果为今天的结果。用hql如下：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CASE WHEN WEEKOFYEAR('$&#123;TIME&#125;')= WEEKOFYEAR('$&#123;BEFORETIME&#125;') AND F1.LOGIN_YN = 'Y' THEN</span><br><span class="line">    COALESCE(F2.WK_DAY_CNT,0) + 1</span><br><span class="line">WHEN WEEKOFYEAR('$&#123;TIME&#125;')= WEEKOFYEAR('$&#123;BEFORETIME&#125;') THEN COALESCE(F2.WK_DAY_CNT,0) </span><br><span class="line">    WHEN F1.LOGIN_YN = 'Y' THEN 1 ELSE 0 <span class="operator"><span class="keyword">END</span>)</span></span><br></pre></td></tr></table></figure></p>
-<p>现在我想把这段代码用一个udf实现:<br><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">week_acc</span>(<span class="attr_selector">[time]</span>, <span class="attr_selector">[beforeTime]</span>, value, accValue)</span><br></pre></td></tr></table></figure></p>
-<hr>
-<p>现在开始动手实现：</p>
-<ol>
-<li><p>新建maven工程，pom文件添加hive的开发工具包以来以及joda依赖：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">groupId</span>&gt;</span>org.apache.hive<span class="tag">&lt;/<span class="title">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">artifactId</span>&gt;</span>hive-pdk<span class="tag">&lt;/<span class="title">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">version</span>&gt;</span>0.10.0<span class="tag">&lt;/<span class="title">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">groupId</span>&gt;</span>org.apache.hadoop<span class="tag">&lt;/<span class="title">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">artifactId</span>&gt;</span>hadoop-core<span class="tag">&lt;/<span class="title">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">version</span>&gt;</span>1.2.1<span class="tag">&lt;/<span class="title">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">groupId</span>&gt;</span>joda-time<span class="tag">&lt;/<span class="title">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">artifactId</span>&gt;</span>joda-time<span class="tag">&lt;/<span class="title">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">version</span>&gt;</span>2.8.2<span class="tag">&lt;/<span class="title">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>编写自定义的udf类，继承UDF类</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">WeekAccumulator</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">UDF</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    public <span class="type">LongWritable</span> evaluate(<span class="type">Text</span> timeStr,</span><br><span class="line">                                 <span class="type">Text</span> beforeTimeStr,</span><br><span class="line">                                 <span class="type">LongWritable</span> todayValue,</span><br><span class="line">                                 <span class="type">LongWritable</span> beforeAccumulator) &#123;</span><br><span class="line">        <span class="keyword">return</span> inSamePeriod(timeStr, beforeTimeStr) ?</span><br><span class="line">                <span class="keyword">new</span> <span class="type">LongWritable</span>(todayValue.get() + beforeAccumulator.get()) : todayValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public <span class="type">LongWritable</span> evaluate(<span class="type">LongWritable</span> todayValue, <span class="type">LongWritable</span> beforeAccumulator) &#123;</span><br><span class="line">        <span class="type">DateTime</span> dateTime = <span class="keyword">new</span> <span class="type">DateTime</span>();</span><br><span class="line">        <span class="type">Text</span> timeStr = <span class="keyword">new</span> <span class="type">Text</span>(dateTime.toString(<span class="string">"yyyy-MM-dd"</span>));</span><br><span class="line">        <span class="type">Text</span> beforeTimeStr = <span class="keyword">new</span> <span class="type">Text</span>(dateTime.minusDays(<span class="number">1</span>).toString(<span class="string">"yyyy-MM-dd"</span>));</span><br><span class="line">        <span class="keyword">return</span> evaluate(timeStr, beforeTimeStr, todayValue, beforeAccumulator);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> boolean inSamePeriod(<span class="type">Text</span> timeStr, <span class="type">Text</span> beforeTimeStr) &#123;</span><br><span class="line">        <span class="type">DateTime</span> thisDate = <span class="keyword">new</span> <span class="type">DateTime</span>(timeStr.toString());</span><br><span class="line">        <span class="type">DateTime</span> beforeDate = <span class="keyword">new</span> <span class="type">DateTime</span>(beforeTimeStr.toString());</span><br><span class="line">        <span class="keyword">return</span> thisDate.getWeekOfWeekyear() == beforeDate.getWeekOfWeekyear();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>3.打包（注意要把依赖的jar包也打进jar包里，否则运行时会找不到依赖的jar包。）</p>
-<ol>
-<li>将jar包copy到hdfs中</li>
-<li>编辑hive conf文件夹下的.hiverc文件(没有手动创建),文件内容：<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add jar hdfs://&#123;MASTER&#125;/&#123;udf path&#125;</span><br><span class="line"><span class="operator"><span class="keyword">create</span> <span class="keyword">temporary</span> <span class="keyword">function</span> week_acc <span class="keyword">as</span> <span class="string">'&#123;class&#125;'</span>;</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<hr>
-<p><strong>打开hive cli，输入:</strong><br><code>select week_acc(&#39;2015-09-14&#39;, &#39;2015-09-13&#39;, 1, 10)</code><br><strong>执行成功，那么udf就完成了。</strong></p>
-<h2 id="注意事项">注意事项</h2><p>如果hive设置hive.exec.mode.local.auto（默认false）为true的话，上面命令会执行失败，提示jar文件找不到。只能把这个配置改成false了。</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/hive/">hive</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/09/24/hive-udf使用/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/09/24/hive-udf使用/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 
